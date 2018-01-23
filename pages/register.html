@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <title>Document</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/one-page-wonder.min.css" rel="stylesheet">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="https://code.jquery.com/jquery-1.12.0.js"></script>
+    <!-- <script src="../js/script.js"></script> -->
+    <style>
+        body {
+            background-color: #eee;
+        }
+
+        *[role="form"] {
+            max-width: 530px;
+            padding: 15px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 0.3em;
+        }
+
+        *[role="form"] h2 {
+            text-align: center;
+            /* margin-left: 5em; */
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">BounceBall</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Registrarse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Iniciar sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="wrapper">
+            <form class="form-horizontal" role="form" id="register">
+                <h2>Formulario de registro</h2>
+                <div class="form-group">
+                    <label for="firstName" class="col-xs-3 control-label">Nombre de usuario</label>
+                    <div class="col-xs-9">
+                        <input type="text" id="userName" placeholder="Nombre de usuario" class="form-control" autofocus required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="generateAvatar" class="col-xs-3 control-label">Avatar (H/M)</label>
+                    <div class="col-xs-6">
+                        <input type="button" id="generateAvatar" value="Generar" class="btn btn-info"> 
+                        <input type="checkbox" id="gender" checked data-toggle="toggle" data-on="Hombre" data-off="Mujer"  data-onstyle="success" data-offstyle="danger">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="form-group">
+                        <div class="col-xs-9">
+                            <img src="" alt="" id="avatar" srcset="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="firstName" class="col-xs-3 control-label">Nombre</label>
+                    <div class="col-xs-9">
+                        <input type="text" id="firstName" placeholder="Nombre" class="form-control" autofocus required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="lastName" class="col-xs-3 control-label">Apellidos</label>
+                    <div class="col-xs-9">
+                        <input type="text" id="lastName" placeholder="Apellidos" class="form-control" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="col-xs-3 control-label">Email</label>
+                    <div class="col-xs-9">
+                        <input type="email" id="email" placeholder="Email" class="form-control" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-xs-3 control-label">Password</label>
+                    <div class="col-xs-9">
+                        <input type="password" id="password" placeholder="Password" class="form-control" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="birthDate" class="col-xs-3 control-label">Fecha de nacimiento</label>
+                    <div class="col-xs-9">
+                        <input type="date" id="birthDate" class="form-control" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="country" class="col-xs-3 control-label">País</label>
+                    <div class="col-xs-9">
+                        <select id="country" class="form-control">
+                            <option selected>España</option>
+                            <option>Colombia</option>
+                            <option>Uruguay</option>
+                            <option>Argentina</option>
+                            <option>Venezuela</option>
+                            <option>Peru</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- /.form-group -->
+                <!-- <div class="form-group">
+                    <div class="col-xs-9 col-xs-offset-3">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox">I accept
+                                <a href="#">terms</a>
+                            </label>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- /.form-group -->
+                <div class="form-group">
+                    <div class="col-xs-9 col-xs-offset-3">
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- /form -->
+    </div>
+    <!-- ./container -->
+    <!-- <script src="../vendor/jquery/jquery.min.js"></script> -->
+    <!-- <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="cartoon-avatar"></script> -->
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>    
+    <script src="../bundle.js"></script>
+</body>
+
+</html>
