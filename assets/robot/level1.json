@@ -1,0 +1,276 @@
+{ "height":8,
+ "layers":[
+        {
+         "data":[19, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 17, 19, 8, 6, 5, 6, 5, 6, 5, 6, 5, 7, 17, 19, 6, 5, 6, 5, 5, 5, 6, 5, 7, 5, 17, 19, 5, 6, 5, 6, 5, 6, 5, 7, 5, 7, 17, 19, 6, 5, 6, 5, 6, 5, 6, 5, 7, 5, 17, 19, 5, 7, 5, 7, 5, 7, 5, 7, 5, 7, 17, 19, 9, 9, 9, 9, 9, 9, 9, 9, 9, 32, 17, 21, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 20],
+         "height":8,
+         "name":"Capa de Patrones 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":12,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":8,
+         "name":"Capa de patrones 2",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":12,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.0.3",
+ "tileheight":256,
+ "tilesets":[
+        {
+         "columns":0,
+         "firstgid":1,
+         "grid":
+            {
+             "height":1,
+             "orientation":"orthogonal",
+             "width":1
+            },
+         "margin":0,
+         "name":"tileset",
+         "spacing":0,
+         "tilecount":37,
+         "tileheight":464,
+         "tiles":
+            {
+             "0":
+                {
+                 "image":"tileset\/png\/Tiles\/Acid (1).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "1":
+                {
+                 "image":"tileset\/png\/Tiles\/Acid (2).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "10":
+                {
+                 "image":"tileset\/png\/Tiles\/Fence (2).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "11":
+                {
+                 "image":"tileset\/png\/Tiles\/Fence (3).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "12":
+                {
+                 "image":"tileset\/png\/Tiles\/Spike.png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "13":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (1).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "14":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (2).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "15":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (3).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "16":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (4).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "17":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (5).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "18":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (6).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "19":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (7).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "2":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (1).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "20":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (8).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "21":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (9).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "22":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (10).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "23":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (11).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "24":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (12).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "25":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (13).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "26":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (14).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "27":
+                {
+                 "image":"tileset\/png\/Tiles\/Tile (15).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "28":
+                {
+                 "image":"tileset\/png\/Objects\/Barrel (1).png",
+                 "imageheight":238,
+                 "imagewidth":177
+                },
+             "29":
+                {
+                 "image":"tileset\/png\/Objects\/Barrel (2).png",
+                 "imageheight":238,
+                 "imagewidth":177
+                },
+             "3":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (2).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "30":
+                {
+                 "image":"tileset\/png\/Objects\/Box.png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "31":
+                {
+                 "image":"tileset\/png\/Objects\/DoorLocked.png",
+                 "imageheight":464,
+                 "imagewidth":280
+                },
+             "32":
+                {
+                 "image":"tileset\/png\/Objects\/DoorOpen.png",
+                 "imageheight":464,
+                 "imagewidth":280
+                },
+             "33":
+                {
+                 "image":"tileset\/png\/Objects\/DoorUnlocked.png",
+                 "imageheight":464,
+                 "imagewidth":281
+                },
+             "34":
+                {
+                 "image":"tileset\/png\/Objects\/Saw.png",
+                 "imageheight":361,
+                 "imagewidth":357
+                },
+             "35":
+                {
+                 "image":"tileset\/png\/Objects\/Switch (1).png",
+                 "imageheight":257,
+                 "imagewidth":72
+                },
+             "36":
+                {
+                 "image":"tileset\/png\/Objects\/Switch (2).png",
+                 "imageheight":257,
+                 "imagewidth":72
+                },
+             "4":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (3).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "5":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (4).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "6":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (5).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "7":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (6).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "8":
+                {
+                 "image":"tileset\/png\/Tiles\/BGTile (7).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                },
+             "9":
+                {
+                 "image":"tileset\/png\/Tiles\/Fence (1).png",
+                 "imageheight":256,
+                 "imagewidth":256
+                }
+            },
+         "tilewidth":357
+        }],
+ "tilewidth":256,
+ "type":"map",
+ "version":1,
+ "width":12
+}
