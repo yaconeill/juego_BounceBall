@@ -44,7 +44,7 @@ Game.Level1.prototype = {
         this.world.setBounds(0, 0, 736, 472);
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
-        // this.physics.p2.defaultRestitution = 0.1;
+        this.physics.p2.restitution = 1.12;
         // Set the gravity
         this.physics.p2.gravity.y = 1000;
         this.physics.p2.world.defaultContactMaterial.friction = 0.3;
@@ -90,6 +90,8 @@ Game.Level1.prototype = {
 
         sphere = balls.create(180, 0, 'sphere');
         sphere.body.setCircle(28);
+        // sphere.restitution = 4.2;
+
         // sphere.body.clearShapes();
         // sphere.body.loadPolygon('sprite_physics', 'sphere');
         sphere.body.setCollisionGroup(sphereCG);
