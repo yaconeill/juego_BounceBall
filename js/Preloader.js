@@ -18,24 +18,24 @@ Game.Preloader.prototype = {
 
         // this.load.spritesheet('player', 'assets/player.png', 24, 26);
         // this.load.spritesheet('player', '../assets/spritesheet.png', 130, 128, 10);
-        this.load.spritesheet("player", "../assets/player.png", 130, 128, 45);
+        this.load.spritesheet("player", "../assets/player.png", 130.5, 128, 45);
         this.load.physics("sprite_physics", "../assets/sprite_physics.json");
 
         // this.load.spritesheet('buttons', 'assets/buttons.png', 193, 71);
 
         // objeto enemigo
-        this.load.image('bird', '../assets/bird.png');
+        this.load.image('miniSphere', '../assets/sphere_32/sphere-11.png');
         this.load.image('sphere', '../assets/sphere.png');
         // this.load.physics("sprite_physics", "assets/sprite_physics.json");        
 
         // objeto munición
-        this.load.image('nut', '../assets/nut.png');
+        this.load.image('bullet', '../assets/bullet.png');
 
         // Titulo juego
         this.load.image('titlescreen', '../assets/titlescreen.png');
 
         this.load.image('button', '../assets/button.png');
-        
+
     },
     create: function () {
         this.state.start('MainMenu');

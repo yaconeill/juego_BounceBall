@@ -85,14 +85,14 @@
                         }, 
                         {
                          "x":-112,
-                         "y":20
+                         "y":37
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":894,
-                 "y":169
+                 "x":892,
+                 "y":125
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -113,8 +113,8 @@
                  "type":"",
                  "visible":true,
                  "width":64,
-                 "x":153.333333333333,
-                 "y":519.333333333333
+                 "x":101.333333333333,
+                 "y":469.333333333333
                 }],
          "opacity":1,
          "type":"objectgroup",

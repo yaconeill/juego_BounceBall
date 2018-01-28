@@ -108,9 +108,10 @@ function registerForm() {
         user.url = url;
         allUsers.push(user);
         localStorage.setItem('users', JSON.stringify(allUsers));
-        alert('Registrado correctamente, se auto redirigirá en 5 segundos');
+        alert('Registrado correctamente, se auto redirigirá automáticamente');
         // setTimeout(function () {
-        $(location).attr('href', 'login.html');
+        window.location.href = 'login.html';
+        // $(location).attr('href', 'login.html');
         // return false;
         // }, 5000);
     });
