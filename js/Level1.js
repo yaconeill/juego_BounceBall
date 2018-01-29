@@ -71,8 +71,10 @@ Game.Level1.prototype = {
 
         // if (this.bullets !== undefined)
         //     if (this.bullets.body.velocity.y > 1)
-        //         this.bullets.kill();
-
+        //         this.bullets.sprite.kill();
+        // if (this.bullets.position.y !== undefined)
+        if (this.bullets.position.y > 88)
+            this.bullets.sprite.kill();
         // player.body.velocity.x = 0;
 
         // playerLevel = Math.log(playerXP, gameXPsteps);
@@ -240,7 +242,7 @@ Game.Level1.prototype = {
     //     bullet.reset(player.x, player.y - 40);
     //     bullet.body.velocity.y = -300;
     // },
-    bulletKill:function () {
+    bulletKill: function () {
         this.bullets.kill();
     },
     // shootBullet: function () {
@@ -265,6 +267,7 @@ function hit(body1, body2) {
     //  body2 is the body it impacted with
     // body2.sprite.animations.play('die');
     body2.sprite.kill();
+    body1.sprite.kill();
 
 }
 
