@@ -31,6 +31,10 @@ Game.Preloader.prototype = {
         // objeto munición
         this.load.image('bullet', '../assets/bullet.png');
 
+        // sonidos
+        this.load.audio('shoot',['../assets/sound/laser.mp3']);
+        this.load.audio('walk',['../assets/sound/walk.wav']);
+
         // Titulo juego
         this.load.image('titlescreen', '../assets/titlescreen.png');
 
