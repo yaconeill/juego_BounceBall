@@ -95,13 +95,10 @@ Game.Level1.prototype = {
 
         // if (this.bullets !== undefined)
         //     if (this.bullets.body.velocity.y > 1)
-        //         this.bullets.kill();
-        // if (this.bullets.height > 450)
-        //     this.bullets.killAll();
-        if (this.bullets.getFirstAlive() !== null)
-            if (this.bullets.getFirstAlive().position.y < 80)
-                this.bullets.killAll();
-
+        //         this.bullets.sprite.kill();
+        // if (this.bullets.position.y !== undefined)
+        if (this.bullets.position.y > 88)
+            this.bullets.sprite.kill();
         // player.body.velocity.x = 0;
 
         // playerLevel = Math.log(playerXP, gameXPsteps);
@@ -329,7 +326,15 @@ Game.Level1.prototype = {
     render: function () {
     }
 };
+function hit(body1, body2) {
 
+    //  body1 is the body that owns the callback
+    //  body2 is the body it impacted with
+    // body2.sprite.animations.play('die');
+    body2.sprite.kill();
+    body1.sprite.kill();
+
+}
 function checkIfCanJump(game) {
 
     var result = false;

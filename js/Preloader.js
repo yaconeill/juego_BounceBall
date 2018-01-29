@@ -7,14 +7,15 @@ Game.Preloader.prototype = {
         this.preloaderBar = this.add.sprite(this.world.centerX, this.centerY, 'preloaderBar');
         this.preloaderBar.anchor.setTo(0.5, 0.5);
         this.time.advancedTiming = true;
-        this
-            .load
-            .setPreloadSprite(this.preloaderBar);
+        this.load.setPreloadSprite(this.preloaderBar);
 
         //LOAD ALL ASSETS
         this.load.tilemap('map', '../levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
-
         this.load.image('tileset', '../assets/tileset.png');
+        // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // this.sacale.pageAlignHorizontally = true;
+        // this.scale.pageAlignVertically = true;
+        // this.stage.disableVisibilityChange = true;
 
         // this.load.spritesheet('player', 'assets/player.png', 24, 26);
         // this.load.spritesheet('player', '../assets/spritesheet.png', 130, 128, 10);
