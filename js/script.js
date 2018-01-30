@@ -173,5 +173,5 @@ function deleteOneCookie(key) {
  */
 function setCookieMaxAge(name, value) {
     // Max Age 30 min
-    document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + 60 * 30 + ";";
+    document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (3600*24); //60 * 30 + ";";
 }

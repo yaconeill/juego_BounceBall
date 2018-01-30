@@ -47,6 +47,8 @@ var respawn;
 var customBounds;
 var Score = 0;
 var scoreText;
+var endLevelText;
+var endGameText;
 // var gameXPsteps = 0;
 var yAxis = p2.vec2.fromValues(0, 1);
 
@@ -80,7 +82,7 @@ Game.Level1.prototype = {
             up: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
             shoot: this.input.keyboard.addKey(Phaser.Keyboard.ENTER)
         };
-        scoreText = game.add.text(780, 64, 'score: 0', { fontSize: '32px', fill: '#fff' });
+        scoreText = game.add.text(780, 64, 'score: 0', {fontSize: '32px', fill: '#fff'});
 
         // game.physics.p2.setImpactEvents(true);
     },
@@ -92,13 +94,22 @@ Game.Level1.prototype = {
             enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
             enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
         }
+        if (!player.alive) {
+            endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+        }
+        if (!enemy1.sphere.alive)
+            if (!enemyMini1.sphere.alive && !enemyMini2.sphere.alive) {
+                endLevelText = this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
+                scoreText = this.add.text(380, 294, 'score: '+ Score, {fontSize: '32px', fill: '#fff'});
+            }
 
         // if (this.bullets !== undefined)
         //     if (this.bullets.body.velocity.y > 1)
         //         this.bullets.sprite.kill();
         // if (this.bullets.position.y !== undefined)
-        if (this.bullets.position.y > 88)
-            this.bullets.sprite.kill();
+        if (this.bullets.getFirstAlive() !== null)
+            if (this.bullets.getFirstAlive().position.y < 80)
+                this.bullets.killAll();
         // player.body.velocity.x = 0;
 
         // playerLevel = Math.log(playerXP, gameXPsteps);
@@ -112,7 +123,7 @@ Game.Level1.prototype = {
         if (controls.right.isDown) {
             player.animations.play('run');
             player.scale.setTo(1, 1);
-            player.body.moveRight(250);
+            player.body.moveRight(200);
             // var sndWalk = this.add.audio('walk');
             // sndWalk.play();
         }
@@ -120,42 +131,15 @@ Game.Level1.prototype = {
         if (controls.left.isDown) {
             player.animations.play('run');
             player.scale.setTo(-1, 1);
-            player.body.moveLeft(250);
+            player.body.moveLeft(200);
             // var sndWalk2 = this.add.audio('walk');
             // sndWalk2.play();
         }
-        // if (controls.left.isDown) {
-        //     player.body.moveLeft(200);
-        //     if (facing != 'left') {
-        //         player.animations.play('run');
-        //         player.scale.setTo(-1, 1);
-        //         facing = 'left';
-        //     }
-        // }
-        // else if (controls.right.isDown) {
-        //     player.body.moveRight(200);
-        //     if (facing != 'right') {
-        //         player.animations.play('run');
-        //         player.scale.setTo(1, 1);
-        //         facing = 'right';
-        //     }
-        // }
-        // else {
-        //     player.body.velocity.x = 0;
-        //     if (facing != 'idle') {
-        //         player.animations.stop();
-        //         facing = 'idle';
-        //         player.animations.play('idle');
-        //     }
-        // }
-        if (controls.shoot.isDown && player.alive) {
+        if (controls.shoot.isDown && player.alive && Math.round(player.body.velocity.x) === 0) {
             // player.animations.play('shoot');
-            // this.createWeapon();
-            // this.fire();
             sndShoot.play();
             this.fireBullet();
             player.frame = 34;
-            // this.shootBullet();
         }
 
         if (controls.up.isDown && this.time.now > jumpTimer && checkIfCanJump(this)) {
@@ -200,34 +184,12 @@ Game.Level1.prototype = {
         var contactMaterial2 = this.game.physics.p2.createContactMaterial(spriteMaterial2, worldMaterial);
         contactMaterial2.restitution = 1;
 
-        enemyMini2 = new EnemySphere('miniSphere', this.game, x, y-50, 'miniSphere', 10);
+        enemyMini2 = new EnemySphere('miniSphere', this.game, x, y - 50, 'miniSphere', 10);
         enemyMini2.sphere.body.moveLeft(550);
         var spriteMaterial3 = this.game.physics.p2.createMaterial('miniSphere', enemyMini2.sphere.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial3 = this.game.physics.p2.createContactMaterial(spriteMaterial3, worldMaterial);
         contactMaterial3.restitution = 1;
-        // var game = this;
-        // var balls = game.add.group();
-        // balls.enableBody = true;
-        // balls.physicsBodyType = Phaser.Physics.P2JS;
-
-        // sphere = balls.create(810, 90, 'sphere');
-        // sphere.body.setCircle(28);
-        // var spriteMaterial = game.physics.p2.createMaterial('sphere', sphere.body);
-        // var worldMaterial = game.physics.p2.createMaterial('Collisions', map.body);
-        //
-        // game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
-        // var contactMaterial = game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial);
-        // game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
-        //
-        // contactMaterial.restitution = 1.0;  // Restitution (i.e. how bouncy it is!) to use in the contact of these two materials.
-        // contactMaterial.stiffness = 1e7;    // Stiffness of the resulting ContactEquation that this ContactMaterial generate.
-        // contactMaterial.relaxation = 3;     // Relaxation of the resulting ContactEquation that this ContactMaterial generate.
-        // contactMaterial.frictionStiffness = 1e7;    // Stiffness of the resulting FrictionEquation that this ContactMaterial generate.
-        // contactMaterial.frictionRelaxation = 3;     // Relaxation of the resulting FrictionEquation that this ContactMaterial generate.
-        // contactMaterial.surfaceVelocity = 0;
-        //Initiate the sphere with a force
-        // sphere.body.moveLeft(400);
     },
     // createMiniSphere: function () {
     //
@@ -279,53 +241,10 @@ Game.Level1.prototype = {
     hitPlayer: function (body1, body2) {
         body2.sprite.kill();
     },
-    // createWeapon: function () {
-    //     var game = this;
-    //     weapon = game.add.group();
-    //     weapon.enableBody = true;
-    //     weapon.physicsBodyType = Phaser.Physics.P2JS;
-    //     weapon.createMultiple(1, 'bullet', 0, false);
-    //     weapon.setAll('anchor.x', 0.5);
-    //     weapon.setAll('anchor.y', 0.5);
-    //     weapon.setAll('scale.x', 0.5);
-    //     weapon.setAll('scale.y', 0.5);
-    //     weapon.setAll('outOfBoundsKill', true);
-    //     weapon.setAll('checkWorldBounds', true);
-    //     // weapon.events.onOutOfBounds.add(bulletKill, this);
-    // },
-    // fire: function () {
-    //     //Make sure the player can't shoot when dead and that they are able to shoot another bullet
-    //     if (!this.player.alive || this.time.now < this.nextFireTime) {
-    //         return;
-    //     }
-    //
-    //     this.nextFireTime = this.time.now + this.fireRate;
-    //
-    //     var bullet;
-    //     //Properties for the basic weapon
-    //     this.fireRate = 500;
-    //     bullet = weapon.getFirstExists(false);
-    //     bullet.reset(player.x, player.y - 40);
-    //     bullet.body.velocity.y = -300;
-    // },
-    bulletKill: function () {
-        this.bullets.kill();
-    },
-    // shootBullet: function () {
-    //     if (this.time.now > shootTime) {
-    //         weapon = weapon.getFirstExists(false);
-    //         if (weapon) {
-    //             weapon.reset(player.x, player.y - 40);
-    //             weapon.body.moveUp(1200);
-    //             shootTime = this.time.now + 900;
-    //             playerXP += 15;
-    //         }
-    //     }
-    //     weapon.body.createBodyCallback(sphere, hit, this);
-    // },
     render: function () {
     }
 };
+
 function hit(body1, body2) {
 
     //  body1 is the body that owns the callback
@@ -335,6 +254,7 @@ function hit(body1, body2) {
     body1.sprite.kill();
 
 }
+
 function checkIfCanJump(game) {
 
     var result = false;
