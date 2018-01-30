@@ -12,18 +12,18 @@ EnemySphere = function (index, game, x, y, type, radius) {
     //     y: this.bird.y + 200
     // }, 2000, 'Linear', true, 0, 100, true);
 };
-Bullet = function (game) {
-    this.bullets = game.add.group();
-    this.bullets.enableBody = true;
-    this.bullets.physicsBodyType = Phaser.Physics.P2JS;
-    this.bullets.createMultiple(1, 'bullet', 0, false);
-    this.bullets.setAll('anchor.x', 0.5);
-    this.bullets.setAll('anchor.y', 0.5);
-    this.bullets.setAll('scale.x', 0.5);
-    this.bullets.setAll('scale.y', 0.5);
-    this.bullets.setAll('outOfBoundsKill', true);
-    this.bullets.setAll('checkWorldBounds', true);
-};
+// Bullet = function (game) {
+//     this.bullets = game.add.group();
+//     this.bullets.enableBody = true;
+//     this.bullets.physicsBodyType = Phaser.Physics.P2JS;
+//     this.bullets.createMultiple(1, 'bullet', 0, false);
+//     this.bullets.setAll('anchor.x', 0.5);
+//     this.bullets.setAll('anchor.y', 0.5);
+//     this.bullets.setAll('scale.x', 0.5);
+//     this.bullets.setAll('scale.y', 0.5);
+//     this.bullets.setAll('outOfBoundsKill', true);
+//     this.bullets.setAll('checkWorldBounds', true);
+// };
 Game.Level1 = function (game) {
 };
 //#region - variables
@@ -58,7 +58,7 @@ Game.Level1.prototype = {
     create: function (game) {
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
-        this.physics.p2.gravity.y = 1000;
+        this.physics.p2.gravity.y = 500;
         this.stage.backgroundColor = '#3A5963';
         map = this.add.tilemap('map');
         map.addTilesetImage('tileset');
@@ -107,9 +107,13 @@ Game.Level1.prototype = {
         //     if (this.bullets.body.velocity.y > 1)
         //         this.bullets.sprite.kill();
         // if (this.bullets.position.y !== undefined)
-        if (this.bullets.getFirstAlive() !== null)
-            if (this.bullets.getFirstAlive().position.y < 80)
-                this.bullets.killAll();
+        // if (this.bullets.getFirstAlive() !== null)
+        //     if (this.bullets.getFirstAlive().position.y < 80)
+        //         this.bullets.killAll();
+        this.bullets.forEach(function (e) {
+            if (e.position.y < 80)
+                e.kill();
+        }, this);
         // player.body.velocity.x = 0;
 
         // playerLevel = Math.log(playerXP, gameXPsteps);
@@ -123,7 +127,7 @@ Game.Level1.prototype = {
         if (controls.right.isDown) {
             player.animations.play('run');
             player.scale.setTo(1, 1);
-            player.body.moveRight(200);
+            player.body.moveRight(250);
             // var sndWalk = this.add.audio('walk');
             // sndWalk.play();
         }
@@ -131,11 +135,11 @@ Game.Level1.prototype = {
         if (controls.left.isDown) {
             player.animations.play('run');
             player.scale.setTo(-1, 1);
-            player.body.moveLeft(200);
+            player.body.moveLeft(250);
             // var sndWalk2 = this.add.audio('walk');
             // sndWalk2.play();
         }
-        if (controls.shoot.isDown && player.alive && Math.round(player.body.velocity.x) === 0) {
+        if (controls.shoot.isDown && player.alive/* && Math.round(player.body.velocity.x) === 0*/) {
             // player.animations.play('shoot');
             sndShoot.play();
             this.fireBullet();
@@ -143,13 +147,13 @@ Game.Level1.prototype = {
         }
 
         if (controls.up.isDown && this.time.now > jumpTimer && checkIfCanJump(this)) {
-            player.body.moveUp(500);
+            player.body.moveUp(350);
             player.animations.play('jump');
             jumpTimer = this.time.now + 750;
         }
     },
     createPlayer: function () {
-        player = this.add.sprite(100, 200, 'player');
+        player = this.add.sprite(400, 500, 'player');
         this.physics.p2.enable(player, false);
         player.frame = 1;
         player.body.clearShapes();
