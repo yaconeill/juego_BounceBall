@@ -16,6 +16,7 @@ function init(currentUser) {
     game.state.add('Preloader', Game.Preloader);
     game.state.add('MainMenu', Game.MainMenu);
     game.state.add('Level1', Game.Level1);
+    game.state.add('Level2', Game.Level2);
     game.state.start('Boot');
 }
 
@@ -30,16 +31,16 @@ function getCookie(name) {
     return decodeURIComponent(document.cookie.substring(index, endstr));
 
 }
-
-function deleteOneCookie(key) {
-    console.log("Se ha eliminado la Cookie: " + key);
-    return document.cookie = key + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-/**
- *  Cookies functions
- */
-function setCookieMaxAge(name, value) {
-    // Max Age 30 min
-    document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + 60 * 30 + ";";
-}
+//
+// function deleteOneCookie(key) {
+//     console.log("Se ha eliminado la Cookie: " + key);
+//     return document.cookie = key + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+// }
+//
+// /**
+//  *  Cookies functions
+//  */
+// function setCookieMaxAge(name, value) {
+//     // Max Age 30 min
+//     document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + 60 * 30 + ";";
+// }

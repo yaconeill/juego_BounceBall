@@ -4,6 +4,8 @@ Game.Preloader = function (game) {
 
 Game.Preloader.prototype = {
     preload: function () {
+        var allUsers = JSON.parse(localStorage.getItem('users'));
+        var avatar;
         this.preloaderBar = this.add.sprite(this.world.centerX, this.centerY, 'preloaderBar');
         this.preloaderBar.anchor.setTo(0.5, 0.5);
         this.time.advancedTiming = true;
@@ -11,6 +13,7 @@ Game.Preloader.prototype = {
 
         //LOAD ALL ASSETS
         this.load.tilemap('map', '../levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map2', '../levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tileset', '../assets/tileset.png');
         // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         // this.sacale.pageAlignHorizontally = true;
@@ -21,6 +24,7 @@ Game.Preloader.prototype = {
         // this.load.spritesheet('player', '../assets/spritesheet.png', 130, 128, 10);
         this.load.spritesheet("player", "../assets/player.png", 130.5, 128, 45);
         this.load.physics("sprite_physics", "../assets/sprite_physics.json");
+
 
         // this.load.spritesheet('buttons', 'assets/buttons.png', 193, 71);
 
@@ -38,8 +42,20 @@ Game.Preloader.prototype = {
 
         // Titulo juego
         this.load.image('titlescreen', '../assets/titlescreen.png');
-
         this.load.image('button', '../assets/button.png');
+
+        // User attributes
+        this.load.image('live', '../assets/live.png');
+        var currentUser = getCookie("currentUser");
+        allUsers.find(function (user) {
+            if(user.userName === currentUser){
+                avatar = user.url;
+            }
+        });
+        if (avatar === undefined)
+            avatar = '../assets/default.png';
+        this.load.image('avatar', avatar);
+
 
     },
     create: function () {

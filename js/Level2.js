@@ -8,10 +8,10 @@ EnemySphere = function (index, game, x, y, type, radius) {
     this.sphere.body.setCircle(radius);
     game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
 };
-Game.Level1 = function (game) {
+Game.Level2 = function (game) {
 };
 //#region - variables
-var map;
+var map2;
 var layer;
 var enemy1;
 var enemyMini1;
@@ -34,7 +34,7 @@ var endLevelText;
 var endGameText;
 var avatar;
 var lives;
-const livePosition = 780;
+// const livePosition = 780;
 var initPlayer = {
     x: 400,
     y: 500
@@ -44,18 +44,20 @@ var yAxis = p2.vec2.fromValues(0, 1);
 
 var playerLevel = 0;
 //#endregion
-Game.Level1.prototype = {
+Game.Level2.prototype = {
     create: function (game) {
+        enemyMini1.sphere.destroy();
+        enemyMini2.sphere.destroy();
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
         this.physics.p2.gravity.y = 500;
         this.stage.backgroundColor = '#3A5963';
-        map = this.add.tilemap('map');
-        map.addTilesetImage('tileset');
+        map2 = this.add.tilemap('map2');
+        map2.addTilesetImage('tileset');
         sndShoot = this.add.audio('shoot');
         customBounds = {left: null, right: null, top: null, bottom: null};
 
-        layer = map.createLayer('field');
+        layer = map2.createLayer('field');
         layer.resizeWorld();
 
         this.createPlayer();
@@ -64,7 +66,7 @@ Game.Level1.prototype = {
         this.createSphere();
         // this.createWeapon();
         this.createBullets();
-        game.physics.p2.convertTilemap(map, layer);
+        game.physics.p2.convertTilemap(map2, layer);
 
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
@@ -89,9 +91,8 @@ Game.Level1.prototype = {
         //     alert('ñordo');
 
         if (liveCounter !== 0 && player.alive) {
-            var game = this;
             enemy1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
-            if (enemyMini1 !== undefined) {
+            if (enemyMini1.sphere.alive) {
                 enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
                 enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
             }
@@ -104,9 +105,6 @@ Game.Level1.prototype = {
                         fontSize: '32px',
                         fill: '#fff'
                     });
-                    setTimeout(function () {
-                        game.state.start('Level2');
-                    },2000);
                 }
 
             this.bullets.forEach(function (e) {
@@ -171,7 +169,7 @@ Game.Level1.prototype = {
         enemy1 = new EnemySphere('sphere', this.game, 810, 90, 'sphere', 28);
         enemy1.sphere.body.moveLeft(400);
         var spriteMaterial = this.game.physics.p2.createMaterial('sphere', enemy1.sphere.body);
-        worldMaterial = this.game.physics.p2.createMaterial('Collisions', map.body);
+        worldMaterial = this.game.physics.p2.createMaterial('Collisions', map2.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial = this.game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial);
         contactMaterial.restitution = 1.0;
@@ -179,7 +177,6 @@ Game.Level1.prototype = {
     createSplitIntoNewEnemy: function (x, y) {
         enemyMini1 = new EnemySphere('miniSphere', this.game, x, y, 'miniSphere', 10);
         enemyMini1.sphere.body.moveRight(500);
-        enemyMini1.sphere.body.moveUp(400);
         var spriteMaterial2 = this.game.physics.p2.createMaterial('miniSphere', enemyMini1.sphere.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial2 = this.game.physics.p2.createContactMaterial(spriteMaterial2, worldMaterial);
@@ -187,7 +184,6 @@ Game.Level1.prototype = {
 
         enemyMini2 = new EnemySphere('miniSphere', this.game, x, y - 50, 'miniSphere', 10);
         enemyMini2.sphere.body.moveLeft(550);
-        enemyMini2.sphere.body.moveUp(450);
         var spriteMaterial3 = this.game.physics.p2.createMaterial('miniSphere', enemyMini2.sphere.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial3 = this.game.physics.p2.createContactMaterial(spriteMaterial3, worldMaterial);

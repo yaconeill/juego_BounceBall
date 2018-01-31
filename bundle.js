@@ -6,7 +6,7 @@ var allUsers = [];
 var url;
 
 /**
- * 
+ *
  */
 $(document).ready(function () {
     var form = $('form');
@@ -44,10 +44,10 @@ $(document).ready(function () {
 });
 
 /**
- * 
+ *
  */
 function registerForm() {
-    loadUserData();
+    allUsers = loadUserData();
     var form = $('form');
     var valid = false;
     var username = form.find('input').first();
@@ -82,8 +82,7 @@ function registerForm() {
 
     var email = form.find('#email');
     email.blur(function () {
-        if (allUsers.find(o => o.email === email.val()) != null &&
-            email.val().length > 0) {
+        if (allUsers.find(o => o.email === email.val()) != null && email.val().length > 0) {
             if (email.next('span').length == 0) {
                 email.after($('<span></span>'));
             }
@@ -92,7 +91,7 @@ function registerForm() {
         }
         else {
             valid = true;
-            if (email.next('span').length != 0) {
+            if (email.next('span').length !== 0) {
                 email.removeClass('invalid').next().addClass('validMsg');
                 email.next().remove();
             }
@@ -101,8 +100,8 @@ function registerForm() {
 
     $('form').on('submit', function () {
         form.find('input').each(function () {
-            if ($(this).attr('id') != 'generateAvatar' ||
-                $(this).attr('id') != 'gender')
+            if ($(this).attr('id') !== 'generateAvatar'
+                && $(this).attr('id') !== 'gender')
                 user[$(this).attr('id')] = $(this).val();
         });
         user.country = $('#country').find(':selected').text();
@@ -119,10 +118,10 @@ function registerForm() {
 }
 
 /**
- * 
+ *
  */
 function loginForm() {
-    loadUserData();
+    allUsers = loadUserData();
     var form = $('form');
     form.on('submit', function () {
         var username = form.find('input').first();
@@ -145,11 +144,11 @@ $('#signOut').on('click', function () {
 });
 
 /**
- * 
+ *
  */
 function loadUserData() {
     if (JSON.parse(localStorage.getItem('users')) != null)
-        allUsers = JSON.parse(localStorage.getItem('users'));
+        return JSON.parse(localStorage.getItem('users'));
 }
 
 function getCookie(name) {
