@@ -175,6 +175,7 @@ Game.Level3.prototype = {
                                 fill: '#fff'
                             });
                             this.game.time.events.add(2000, function () {
+                                game.destroy();
                                 // Score = Score * liveCounter;
                                 // game.state.start('Level3');
                             });

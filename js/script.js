@@ -9,10 +9,10 @@ var url;
  */
 $(document).ready(function () {
     var form = $('form');
-    if (form.attr('id') === 'register'){
+    if (form.attr('id') === 'register') {
         /**
-     * Bootstrap
-     */
+         * Bootstrap
+         */
         $(function () {
             $('#toggle-two').bootstrapToggle({
                 on: 'Enabled',
@@ -50,23 +50,24 @@ function registerForm() {
     var form = $('form');
     var valid = false;
     var username = form.find('input').first();
-    username.blur(function () {
-        if (allUsers.find(o => o.userName === username.val()) != null &&
-            username.val().length > 0) {
-            if (username.next('span').length == 0) {
-                username.after($('<span></span>'));
+    if (allUsers !== undefined)
+        username.blur(function () {
+            if (allUsers.find(o => o.userName === username.val()) != null &&
+                username.val().length > 0) {
+                if (username.next('span').length == 0) {
+                    username.after($('<span></span>'));
+                }
+                username.next().text('El nombre de usuario ya existe');
+                username.addClass('invalid').next().removeClass('validMsg').addClass('invalidMsg');
             }
-            username.next().text('El nombre de usuario ya existe');
-            username.addClass('invalid').next().removeClass('validMsg').addClass('invalidMsg');
-        }
-        else {
-            valid = true;
-            if (username.next('span').length != 0) {
-                username.removeClass('invalid').next().addClass('validMsg');
-                username.next().remove();
+            else {
+                valid = true;
+                if (username.next('span').length != 0) {
+                    username.removeClass('invalid').next().addClass('validMsg');
+                    username.next().remove();
+                }
             }
-        }
-    });
+        });
 
     $('#generateAvatar').on('click', function () {
         var gender = {};
@@ -80,24 +81,27 @@ function registerForm() {
     });
 
     var email = form.find('#email');
-    email.blur(function () {
-        if (allUsers.find(o => o.email === email.val()) != null && email.val().length > 0) {
-            if (email.next('span').length == 0) {
-                email.after($('<span></span>'));
+    if (allUsers !== undefined)
+        email.blur(function () {
+            if (allUsers.find(o => o.email === email.val()) != null && email.val().length > 0) {
+                if (email.next('span').length == 0) {
+                    email.after($('<span></span>'));
+                }
+                email.next().text('Ya hay un usuario registrado con ese email');
+                email.addClass('invalid').next().removeClass('validMsg').addClass('invalidMsg');
             }
-            email.next().text('Ya hay un usuario registrado con ese email');
-            email.addClass('invalid').next().removeClass('validMsg').addClass('invalidMsg');
-        }
-        else {
-            valid = true;
-            if (email.next('span').length !== 0) {
-                email.removeClass('invalid').next().addClass('validMsg');
-                email.next().remove();
+            else {
+                valid = true;
+                if (email.next('span').length !== 0) {
+                    email.removeClass('invalid').next().addClass('validMsg');
+                    email.next().remove();
+                }
             }
-        }
-    });
+        });
 
     $('form').on('submit', function () {
+        if (allUsers === undefined)
+            allUsers = [];
         form.find('input').each(function () {
             if ($(this).attr('id') !== 'generateAvatar'
                 && $(this).attr('id') !== 'gender')
@@ -107,7 +111,9 @@ function registerForm() {
         user.url = url;
         allUsers.push(user);
         localStorage.setItem('users', JSON.stringify(allUsers));
-        alert('Registrado correctamente, se auto redirigirá automáticamente');
+        // notification('success', 'Registrado correctamente, se auto redirigirá automáticamente.');
+
+        alert('Registrado correctamente, se redirigirá automáticamente');
         // setTimeout(function () {
         window.location.href = 'login.html';
         // $(location).attr('href', 'login.html');
@@ -122,16 +128,18 @@ function registerForm() {
 function loginForm() {
     allUsers = loadUserData();
     var form = $('form');
-    form.on('submit', function () {
+    form.on('click', 'button', function () {
         var username = form.find('input').first();
         var password = form.find('input').first().next();
-        if (allUsers.find(o => o.userName.toLowerCase() === username.val().toLowerCase() && o.password === password.val()) != null) {
-            setCookieMaxAge('currentUser', username.val().toLowerCase());
-            $(location).attr('href', 'game.html');
-            return false;
+        if (allUsers !== undefined) {
+            if (allUsers.find(o => o.userName.toLowerCase() === username.val().toLowerCase() && o.password === password.val()) != null) {
+                setCookieMaxAge('currentUser', username.val().toLowerCase());
+                $(location).attr('href', 'game.html');
+                return false;
+            }
         }
         else {
-            alert('Usuario no encontrado');
+            notification('error', 'El usuario o la contraseña no son correctas.');
         }
     });
 
@@ -141,6 +149,20 @@ $('#signOut').on('click', function () {
     deleteOneCookie('currentUser');
     location.reload();
 });
+toastr.options.closeButton = true;
+toastr.options.positionClass = "toast-bottom-right";
+
+function notification(type, message) {
+    if (type === 'success') {
+        toastr.success(message, '<i>Éxito</i>');
+    } else if (type === 'error') {
+        toastr.error(message, 'Error');
+    } else if (type === 'warning') {
+        toastr.warning(message, 'Peligro');
+    } else {
+        toastr.info(message, 'Información');
+    }
+}
 
 /**
  *
@@ -172,5 +194,5 @@ function deleteOneCookie(key) {
  */
 function setCookieMaxAge(name, value) {
     // Max Age 30 min
-    document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (3600*24); //60 * 30 + ";";
+    document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + (3600 * 24); //60 * 30 + ";";
 }
