@@ -14,6 +14,7 @@ Game.Preloader.prototype = {
         //LOAD ALL ASSETS
         this.load.tilemap('map', '../levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('map2', '../levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map3', '../levels/level3.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tileset', '../assets/tileset.png');
         // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         // this.sacale.pageAlignHorizontally = true;
@@ -30,8 +31,14 @@ Game.Preloader.prototype = {
 
         // objeto enemigo
         this.load.image('miniSphere', '../assets/sphere_32/sphere-11.png');
-        this.load.image('sphere', '../assets/sphere.png');
-        // this.load.physics("sprite_physics", "assets/sprite_physics.json");        
+        this.load.image('miniSphereGreen', '../assets/sphere_32/sphere-07.png');
+        this.load.image('miniSphereCyan', '../assets/sphere_32/sphere-23.png');
+        this.load.image('microSphere', '../assets/sphere_16/sphere-17.png');
+        this.load.image('microSphere2', '../assets/sphere_16/sphere-07.png');
+        this.load.image('sphere', '../assets/sphere_64/sphere.png');
+        this.load.image('sphere2', '../assets/sphere_64/sphere2.png');
+        this.load.spritesheet('bomb', '../assets/fatman.png',50, 50, 5);
+        this.load.spritesheet('boom', '../assets/explosion.png',128, 128, 64);
 
         // objeto munición
         this.load.image('bullet', '../assets/bullet.png');

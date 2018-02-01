@@ -10,14 +10,15 @@ $(document).ready(function () {
 });
 
 function init(currentUser) {
-    $('#userName').text(currentUser);
-    var game = new Phaser.Game(960, 600, Phaser.CANVAS, '');
-    game.state.add('Boot', Game.Boot);
-    game.state.add('Preloader', Game.Preloader);
-    game.state.add('MainMenu', Game.MainMenu);
-    game.state.add('Level1', Game.Level1);
-    game.state.add('Level2', Game.Level2);
-    game.state.start('Boot');
+        $('#userName').text(currentUser);
+        var game = new Phaser.Game(960, 600, Phaser.CANVAS, '');
+        game.state.add('Boot', Game.Boot);
+        game.state.add('Preloader', Game.Preloader);
+        game.state.add('MainMenu', Game.MainMenu);
+        game.state.add('Level1', Game.Level1);
+        game.state.add('Level2', Game.Level2);
+        game.state.add('Level3', Game.Level3);
+        game.state.start('Boot');
 }
 
 function getCookie(name) {

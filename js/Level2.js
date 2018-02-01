@@ -8,6 +8,16 @@ EnemySphere = function (index, game, x, y, type, radius) {
     this.sphere.body.setCircle(radius);
     game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
 };
+EnemyBomb = function (index, game, x, y, type, radius) {
+    this.weapon = game.add.sprite(x, y, type);
+    this.weapon.anchor.setTo(0.5, 0.5);
+    this.weapon.name = index.toString();
+
+    game.physics.enable(this.weapon, Phaser.Physics.P2JS);
+    this.weapon.body.collideWorldBounds = true;
+    this.weapon.body.setCircle(radius);
+    game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
+};
 Game.Level2 = function (game) {
 };
 //#region - variables
@@ -23,8 +33,8 @@ var jumpTimer = 0;
 var button;
 var worldMaterial;
 var shootTime = 0;
-var weapon;
-var facing = 'left';
+var bomb;
+var explosion;
 var sndShoot;
 var customBounds;
 var Score = 0;
@@ -34,6 +44,8 @@ var endLevelText;
 var endGameText;
 var avatar;
 var lives;
+var bounces;
+var bombing;
 // const livePosition = 780;
 var initPlayer = {
     x: 400,
@@ -45,9 +57,8 @@ var yAxis = p2.vec2.fromValues(0, 1);
 var playerLevel = 0;
 //#endregion
 Game.Level2.prototype = {
-    create: function (game) {
-        enemyMini1.sphere.destroy();
-        enemyMini2.sphere.destroy();
+    create: function () {
+        var game = this;
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
         this.physics.p2.gravity.y = 500;
@@ -62,7 +73,6 @@ Game.Level2.prototype = {
 
         this.createPlayer();
 
-
         this.createSphere();
         // this.createWeapon();
         this.createBullets();
@@ -71,44 +81,77 @@ Game.Level2.prototype = {
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
             left: this.input.keyboard.addKey(Phaser.Keyboard.A),
-            up: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
-            shoot: this.input.keyboard.addKey(Phaser.Keyboard.ENTER)
+            up: this.input.keyboard.addKey(Phaser.Keyboard.W),
+            shoot: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         };
         scoreText = game.add.text(780, 50, 'score: 0', {fontSize: '32px', fill: '#fff'});
         avatar = game.add.sprite(700, 50, 'avatar');
         avatar.width = 64;
         avatar.height = 64;
-
+        this.game.time.events.add(3000, function () {
+            let rndX = randomLocation();
+            game.createBomb(rndX, 0);
+        });
+        bounces = 0;
         this.liveIndicator();
     },
     update: function () {
+        var game = this;
         scoreText.text = 'Score: ' + Score;
-        // var sprite = lives.getFirstExists(true);
-        // if (sprite)
-        //     sprite.kill();
-        // this.liveIndicator();
-        // if(enemy1.sphere.body.velocity.y < 130)
-        //     alert('ñordo');
+        if (bomb !== undefined && bomb !== null) {
+            bomb.weapon.animations.play('turn');
+            if (Math.floor(bomb.weapon.position.y) === 540 && bomb.weapon.alive) {
+                explosion.animations.play('boom');
+                bomb.weapon.kill();
+            }
+            if (bomb.weapon.body !== null && player.alive)
+                bomb.weapon.body.createBodyCallback(player, this.hitPlayer, this);
+        }
 
         if (liveCounter !== 0 && player.alive) {
+            if (Math.floor(enemy1.sphere.position.y) > 540) {
+                bounces++;
+            }
+            if (bounces > 8) {
+                this.hitPlayer(enemy1.sphere, player.body);
+            }
+
             enemy1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
-            if (enemyMini1.sphere.alive) {
-                enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
-                enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+            if (enemyMini1 !== null && enemyMini1 !== undefined) {
+                if (enemyMini1.sphere.body !== null && enemyMini1.sphere.body !== undefined) {
+                    enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+                    enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+
+                }
             }
 
             if (!enemy1.sphere.alive)
                 if (!enemyMini1.sphere.alive && !enemyMini2.sphere.alive) {
+                    player.animations.play('shoot');
                     endLevelText = this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
                     scoreText = this.add.text(380, 294, 'score: ' + Score, {fontSize: '32px', fill: '#fff'});
                     bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + Score * liveCounter, {
                         fontSize: '32px',
                         fill: '#fff'
                     });
+                    this.game.time.events.add(1000, function () {
+                        game.add.text(380, 360, 'Cargando siguiente nivel...', {
+                            fontSize: '25px',
+                            fill: '#fff'
+                        });
+                    });
+                    this.game.time.events.add(3000, function () {
+                        Score = Score * liveCounter;
+                        game.state.start('Level3');
+                    });
                 }
 
+            // this.bullets.forEach(function (e) {
+            //     if (e.position.y < 80)
+            //         e.kill();
+            // }, this);
             this.bullets.forEach(function (e) {
-                if (e.position.y < 80)
+                if (e.position.y < 85 || e.position.y > 535)
                     e.kill();
             }, this);
 
@@ -174,24 +217,36 @@ Game.Level2.prototype = {
         var contactMaterial = this.game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial);
         contactMaterial.restitution = 1.0;
     },
-    createSplitIntoNewEnemy: function (x, y) {
-        enemyMini1 = new EnemySphere('miniSphere', this.game, x, y, 'miniSphere', 10);
+    createMiniSphere: function (x, y) {
+        enemyMini1 = new EnemySphere('miniSphere1', this.game, x, y, 'miniSphere', 10);
         enemyMini1.sphere.body.moveRight(500);
+        enemyMini1.sphere.body.moveUp(400);
         var spriteMaterial2 = this.game.physics.p2.createMaterial('miniSphere', enemyMini1.sphere.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial2 = this.game.physics.p2.createContactMaterial(spriteMaterial2, worldMaterial);
         contactMaterial2.restitution = 1;
 
-        enemyMini2 = new EnemySphere('miniSphere', this.game, x, y - 50, 'miniSphere', 10);
+        enemyMini2 = new EnemySphere('miniSphere2', this.game, x, y - 50, 'miniSphere', 10);
         enemyMini2.sphere.body.moveLeft(550);
+        enemyMini2.sphere.body.moveUp(450);
         var spriteMaterial3 = this.game.physics.p2.createMaterial('miniSphere', enemyMini2.sphere.body);
         this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
         var contactMaterial3 = this.game.physics.p2.createContactMaterial(spriteMaterial3, worldMaterial);
         contactMaterial3.restitution = 1;
     },
-    // createMiniSphere: function () {
-    //
-    // },
+    createBomb: function (x, y) {
+        bomb = new EnemyBomb('bomb', this.game, x, y, 'bomb');
+        bomb.weapon.animations.add('turn', [1, 2, 3, 4, 5], 10, true);
+        explosion = this.game.add.sprite(bomb.weapon.position.x - 70, 520, 'boom');
+        explosion.animations.add('boom', [
+            11,12,13,14,15,16,17,18,19,20,
+            21,22,23,24,25,26,27,28,29,30,
+            31,32,33,34,35,36,37,38,39,40,
+            41,42,43,44,45,46,47,48,49,50,
+            51,52,53,54,55,56,57,58,59,60,
+            61,62,63,64], 60, false);
+        // this.physics.p2.enable(bomb, true);
+    },
     createBullets: function () {
         //Bullets
         this.bullets = this.add.group();
@@ -221,27 +276,32 @@ Game.Level2.prototype = {
                 // this.bullet.body.moveUp(1200);
 
             }
-            this.bullet.body.createBodyCallback(enemy1.sphere, this.hitSphere, this);
+            this.bullet.body.createBodyCallback(enemy1.sphere, this.hitEnemy, this);
             if (enemyMini1 !== undefined)
-                this.bullet.body.createBodyCallback(enemyMini1.sphere, this.hitSphere, this);
+                this.bullet.body.createBodyCallback(enemyMini1.sphere, this.hitEnemyMini, this);
             if (enemyMini2 !== undefined)
-                this.bullet.body.createBodyCallback(enemyMini2.sphere, this.hitSphere, this);
+                this.bullet.body.createBodyCallback(enemyMini2.sphere, this.hitEnemyMini, this);
+            if(bomb !== undefined)
+                this.bullet.body.createBodyCallback(bomb.weapon, this.hitEnemyMini, this);
         }
     },
-    hitSphere: function (body1, body2) {
-        if (enemy1.sphere.alive)
-            this.createSplitIntoNewEnemy(enemy1.sphere.x, enemy1.sphere.y);
+    hitEnemy: function (body1, body2) {
+        this.createMiniSphere(body2.x, body2.y);
         body2.sprite.kill();
         body1.sprite.kill();
         Score += 50;
-        // scoreText.text = 'Score: ' + Score;
+    },
+    hitEnemyMini: function (body1, body2) {
+        body2.sprite.kill();
+        body1.sprite.kill();
+        Score += 50;
     },
     hitPlayer: function (body1, body2) {
         body2.sprite.kill();
         liveCounter--;
         if (liveCounter !== 0)
-            // this.state.restart();
-        body2.sprite.reset(initPlayer.x, initPlayer.y);
+            this.state.restart();
+        // body2.sprite.reset(initPlayer.x, initPlayer.y);
         var sprite = lives.getFirstExists(true);
         if (sprite) {
             sprite.kill();
@@ -259,13 +319,8 @@ Game.Level2.prototype = {
     }
 };
 
-function hit(body1, body2) {
-    //  body1 is the body that owns the callback
-    //  body2 is the body it impacted with
-    // body2.sprite.animations.play('die');
-    body2.sprite.kill();
-    body1.sprite.kill();
-
+function randomLocation() {
+    return Math.floor((Math.random() * 750) + 80);
 }
 
 function checkIfCanJump(game) {

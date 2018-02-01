@@ -46,6 +46,10 @@ var playerLevel = 0;
 //#endregion
 Game.Level1.prototype = {
     create: function (game) {
+        if (enemyMini1 !== undefined && enemyMini2 !== undefined) {
+            enemyMini1.sphere.destroy();
+            enemyMini2.sphere.destroy();
+        }
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
         this.physics.p2.gravity.y = 500;
@@ -59,8 +63,6 @@ Game.Level1.prototype = {
         layer.resizeWorld();
 
         this.createPlayer();
-
-
         this.createSphere();
         // this.createWeapon();
         this.createBullets();
@@ -69,8 +71,8 @@ Game.Level1.prototype = {
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
             left: this.input.keyboard.addKey(Phaser.Keyboard.A),
-            up: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),
-            shoot: this.input.keyboard.addKey(Phaser.Keyboard.ENTER)
+            up: this.input.keyboard.addKey(Phaser.Keyboard.W),
+            shoot: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         };
         scoreText = game.add.text(780, 50, 'score: 0', {fontSize: '32px', fill: '#fff'});
         avatar = game.add.sprite(700, 50, 'avatar');
@@ -86,31 +88,44 @@ Game.Level1.prototype = {
         //     sprite.kill();
         // this.liveIndicator();
         // if(enemy1.sphere.body.velocity.y < 130)
-        //     alert('ñordo');
 
         if (liveCounter !== 0 && player.alive) {
             var game = this;
             enemy1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
-            if (enemyMini1 !== undefined) {
-                enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
-                enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+            if (enemyMini1 !== null && enemyMini1 !== undefined) {
+                if (enemyMini1.sphere.body !== null && enemyMini1.sphere.body !== undefined) {
+                    enemyMini1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+                    enemyMini2.sphere.body.createBodyCallback(player, this.hitPlayer, this);
+                }
             }
 
             if (!enemy1.sphere.alive)
                 if (!enemyMini1.sphere.alive && !enemyMini2.sphere.alive) {
+                    player.animations.play('shoot');
                     endLevelText = this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
                     scoreText = this.add.text(380, 294, 'score: ' + Score, {fontSize: '32px', fill: '#fff'});
                     bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + Score * liveCounter, {
                         fontSize: '32px',
                         fill: '#fff'
                     });
-                    setTimeout(function () {
+                    this.game.time.events.add(1000, function () {
+                        game.add.text(380, 360, 'Cargando siguiente nivel...', {
+                            fontSize: '25px',
+                            fill: '#fff'
+                        });
+                    });
+                    this.game.time.events.add(3000, function () {
+                        Score = Score * liveCounter;
                         game.state.start('Level2');
-                    },2000);
+                    });
                 }
 
+            // this.bullets.forEach(function (e) {
+            //     if (e.position.y < 80)
+            //         e.kill();
+            // }, this);
             this.bullets.forEach(function (e) {
-                if (e.position.y < 80)
+                if (e.position.y < 85 || e.position.y > 535)
                     e.kill();
             }, this);
 
@@ -145,6 +160,7 @@ Game.Level1.prototype = {
                 jumpTimer = this.time.now + 750;
             }
         } else {
+            player.animations.play('die');
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
         }
     },
@@ -162,7 +178,7 @@ Game.Level1.prototype = {
         player.animations.add('jump', [20, 21, 22, 23, 24, 25, 26, 27, 28], 10, true);
         player.animations.add('shoot', [30, 31, 32, 33, 34, 35, 36, 37], 10, true);
         player.animations.add('run', [38, 39, 40, 41, 42, 43, 44, 45], 10, true);
-        player.animations.add('die', [1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
+        player.animations.add('die', [1, 2, 3, 4, 5, 6, 7, 8, 9], 10, false);
         this.physics.p2.enable(player);
         this.camera.follow(player);
         player.body.collideWorldBounds = true;
@@ -176,7 +192,7 @@ Game.Level1.prototype = {
         var contactMaterial = this.game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial);
         contactMaterial.restitution = 1.0;
     },
-    createSplitIntoNewEnemy: function (x, y) {
+    createMiniSphere: function (x, y) {
         enemyMini1 = new EnemySphere('miniSphere', this.game, x, y, 'miniSphere', 10);
         enemyMini1.sphere.body.moveRight(500);
         enemyMini1.sphere.body.moveUp(400);
@@ -225,27 +241,26 @@ Game.Level1.prototype = {
                 // this.bullet.body.moveUp(1200);
 
             }
-            this.bullet.body.createBodyCallback(enemy1.sphere, this.hitSphere, this);
+            this.bullet.body.createBodyCallback(enemy1.sphere, this.hitEnemy, this);
             if (enemyMini1 !== undefined)
-                this.bullet.body.createBodyCallback(enemyMini1.sphere, this.hitSphere, this);
+                this.bullet.body.createBodyCallback(enemyMini1.sphere, this.hitEnemy, this);
             if (enemyMini2 !== undefined)
-                this.bullet.body.createBodyCallback(enemyMini2.sphere, this.hitSphere, this);
+                this.bullet.body.createBodyCallback(enemyMini2.sphere, this.hitEnemy, this);
         }
     },
-    hitSphere: function (body1, body2) {
+    hitEnemy: function (body1, body2) {
         if (enemy1.sphere.alive)
-            this.createSplitIntoNewEnemy(enemy1.sphere.x, enemy1.sphere.y);
+            this.createMiniSphere(body2.x, body2.y);
         body2.sprite.kill();
         body1.sprite.kill();
         Score += 50;
-        // scoreText.text = 'Score: ' + Score;
     },
     hitPlayer: function (body1, body2) {
         body2.sprite.kill();
         liveCounter--;
         if (liveCounter !== 0)
-            // this.state.restart();
-        body2.sprite.reset(initPlayer.x, initPlayer.y);
+            this.state.restart();
+        // body2.sprite.reset(initPlayer.x, initPlayer.y);
         var sprite = lives.getFirstExists(true);
         if (sprite) {
             sprite.kill();
@@ -262,15 +277,15 @@ Game.Level1.prototype = {
     render: function () {
     }
 };
-
-function hit(body1, body2) {
-    //  body1 is the body that owns the callback
-    //  body2 is the body it impacted with
-    // body2.sprite.animations.play('die');
-    body2.sprite.kill();
-    body1.sprite.kill();
-
-}
+//
+// function hit(body1, body2) {
+//     //  body1 is the body that owns the callback
+//     //  body2 is the body it impacted with
+//     // body2.sprite.animations.play('die');
+//     body2.sprite.kill();
+//     body1.sprite.kill();
+//
+// }
 
 function checkIfCanJump(game) {
     var result = false;

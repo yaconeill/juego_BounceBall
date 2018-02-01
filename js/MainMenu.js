@@ -8,6 +8,7 @@ Game.MainMenu.prototype = {
     create: function (game) {
         this.createButton(game, "Play", game.world.centerX, game.world.centerY + 32, 300, 100, 
         function () {
+            // this.state.start('Level2');
             this.state.start('Level1');
         });
 
