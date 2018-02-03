@@ -3,59 +3,51 @@ EnemySphere = function (index, game, x, y, type, radius) {
     this.sphere.anchor.setTo(0.5, 0.5);
     this.sphere.name = index.toString();
 
-    game.physics.enable(this.sphere, Phaser.Physics.P2JS);
+    game.physics.p2.enable(this.sphere);
     this.sphere.body.collideWorldBounds = true;
     this.sphere.body.setCircle(radius);
     game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
 };
-EnemyBomb = function (index, game, x, y, type, radius) {
+EnemyBomb = function (index, game, x, y, type) {
     this.weapon = game.add.sprite(x, y, type);
     this.weapon.anchor.setTo(0.5, 0.5);
     this.weapon.name = index.toString();
 
-    game.physics.enable(this.weapon, Phaser.Physics.P2JS);
+    game.physics.p2.enable(this.weapon);
     this.weapon.body.collideWorldBounds = true;
-    this.weapon.body.setCircle(radius);
     game.physics.p2.setBounds(64, 64, 880, 505, true, true, true, true);
 };
 Game.Level3 = function () {
 };
 //#region - variables
 var map3;
-var layer;
-var enemy1;
-var enemyMini1;
-var enemyMini2;
+// var layer;
+// var enemy1;
+// var enemyMini1;
+// var enemyMini2;
 var enemyMicro1, enemyMicro2, enemyMicro3, enemyMicro4;
 var liveCounter = 5;
-var player;
-var controls = {};
-var jumpTimer = 0;
-var button;
-var worldMaterial;
+// var player;
+// var controls = {};
+// var jumpTimer = 0;
+// var button;
+// var worldMaterial;
 var shootTime = 0;
-var bomb;
-var explosion;
-var sndShoot;
-var customBounds;
-var Score = 0;
-var scoreText;
-var bonusText;
-var endLevelText;
-var endGameText;
-var avatar;
-var lives;
-var bounces;
+// var bomb;
+// var explosion;
+// var sndShoot;
+// var customBounds;
+// var Score = 0;
+// var scoreText;
+// var bonusText;
+// var endLevelText;
+// var endGameText;
+// var avatar;
+// var lives;
+// var bounces;
 var bool = true;
-// const livePosition = 780;
-var initPlayer = {
-    x: 400,
-    y: 500
-};
-// var gameXPsteps = 0;
-var yAxis = p2.vec2.fromValues(0, 1);
-
 var playerLevel = 0;
+
 //#endregion
 Game.Level3.prototype = {
     create: function () {
@@ -65,21 +57,27 @@ Game.Level3.prototype = {
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.setImpactEvents(true);
         this.physics.p2.gravity.y = 400;
-        this.stage.backgroundColor = '#3A5963';
+        this.stage.backgroundColor = '#000';
         map3 = this.add.tilemap('map3');
         map3.addTilesetImage('tileset');
-        sndShoot = this.add.audio('shoot');
         customBounds = {left: null, right: null, top: null, bottom: null};
-
         layer = map3.createLayer('field');
         layer.resizeWorld();
-
-        this.createPlayer();
-
-        this.createSphere();
-        // this.createWeapon();
-        this.createBullets();
+        Game.Level1.prototype.createPlayer(game);
+        Game.Level1.prototype.createSphere(game, map3);
+        Game.Level1.prototype.createBullets(game);
+        Game.Level2.prototype.createPowerUp(game);
         game.physics.p2.convertTilemap(map3, layer);
+
+        // sndMusic = game.add.audio('background');
+        // sndMusic.play();
+        sndShoot = this.add.audio('shoot');
+        sndJump = this.add.audio('jump');
+        sndHit = this.add.audio('hit');
+        sndBounce = this.add.audio('bounce');
+        sndPickUp = this.add.audio('pickup');
+        sndPickUpLive = this.add.audio('pickuplive');
+        sndExplosion = this.add.audio('explosion');
 
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
@@ -87,20 +85,24 @@ Game.Level3.prototype = {
             up: this.input.keyboard.addKey(Phaser.Keyboard.W),
             shoot: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         };
-        scoreText = game.add.text(780, 50, 'score: 0', {fontSize: '32px', fill: '#fff'});
+        scoreText = game.add.text(780, 50, 'Score: 0', {fontSize: '32px', fill: '#fff'});
         avatar = game.add.sprite(700, 50, 'avatar');
         avatar.width = 64;
         avatar.height = 64;
         bounces = 0;
-        this.game.time.events.add(3000, function () {
+        bombLoop = game.time.events.loop(Phaser.Timer.SECOND * 3, function () {
             let rndX = randomLocation();
-            game.createBomb(rndX, 0);
-        });
+            Game.Level2.prototype.createBomb(game, rndX);
+        }, this);
         this.liveIndicator();
+        createButton(game, "Reiniciar", 64, 75, 75, 40,
+            function () {
+                resetGame(game);
+            });
     },
     update: function () {
         var game = this;
-        scoreText.text = 'Score: ' + Score;
+        scoreText.text = 'Score: ' + score;
 
         // setTimeout(function () {
         //
@@ -108,7 +110,8 @@ Game.Level3.prototype = {
 
         if (bomb !== undefined && bomb !== null) {
             bomb.weapon.animations.play('turn');
-            if (Math.floor(bomb.weapon.position.y) === 540 && bomb.weapon.alive) {
+            if (Math.floor(bomb.weapon.position.y) > 530 && bomb.weapon.alive) {
+                sndExplosion.play();
                 explosion.animations.play('boom');
                 bomb.weapon.destroy();
             }
@@ -129,7 +132,7 @@ Game.Level3.prototype = {
         // if(enemy1.sphere.body.velocity.y < 130)
 
 
-        if (liveCounter !== 0 && player.alive) {
+        if (liveCounter > 0 && player.alive) {
             if (Math.floor(enemy1.sphere.position.y) > 540) {
                 bounces++;
             }
@@ -168,16 +171,16 @@ Game.Level3.prototype = {
                             !enemyMicro4.sphere.alive) {
                             player.animations.play('shoot');
                             // scoreText.text = 'Score: ' + Score;
-                            endLevelText = this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
-                            scoreText = this.add.text(380, 294, 'score: ' + Score, {fontSize: '32px', fill: '#fff'});
-                            bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + Score * liveCounter, {
+                            endLevelText = this.add.text(380, 264, 'Fin del nivel 3', {fontSize: '32px', fill: '#fff'});
+                            scoreText = this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
+                            bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
                                 fontSize: '32px',
                                 fill: '#fff'
                             });
+                            game.time.events.remove(bombLoop);
                             this.game.time.events.add(2000, function () {
-                                game.destroy();
-                                // Score = Score * liveCounter;
-                                // game.state.start('Level3');
+                                score = score * liveCounter;
+                                game.state.start('Level4');
                             });
                         }
 
@@ -186,7 +189,26 @@ Game.Level3.prototype = {
                     e.kill();
             }, this);
 
-            if (Math.round(player.body.velocity.x) === 0 && Math.round(player.body.velocity.y) === 0)
+            // Drop elements
+            if (this.powerUp !== null && this.powerUp !== undefined)
+                if (this.powerUp.alive) {
+                    enemy1.sphere.body.createBodyCallback(this.powerUp, this.loseDrop, this);
+                    player.body.createBodyCallback(this.powerUp, this.catchDrop, this);
+                }
+            if (this.barrel !== null && this.barrel !== undefined)
+                if (this.barrel.alive) {
+                    enemy1.sphere.body.createBodyCallback(this.barrel, this.loseDrop, this);
+                    player.body.createBodyCallback(this.barrel, this.catchDrop, this);
+                }
+            if (this.live !== null && this.live !== undefined)
+                if (this.live.alive) {
+                    enemy1.sphere.body.createBodyCallback(this.live, this.loseDrop, this);
+                    player.body.createBodyCallback(this.live, this.catchDrop, this);
+                }
+
+            //#region - Player controls
+            if (Math.round(player.body.velocity.x) === 0 &&
+                Math.round(player.body.velocity.y) === 0)
                 player.animations.play('idle');
 
             if (controls.right.isDown) {
@@ -213,40 +235,15 @@ Game.Level3.prototype = {
 
             if (controls.up.isDown && this.time.now > jumpTimer && checkIfCanJump(this)) {
                 player.body.moveUp(350);
+                sndJump.play();
                 player.animations.play('jump');
                 jumpTimer = this.time.now + 750;
             }
+            //#endregion
         } else {
+            game.time.events.remove(bombLoop);
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
         }
-    },
-    createPlayer: function () {
-        player = this.add.sprite(initPlayer.x, initPlayer.y, 'player');
-        this.physics.p2.enable(player, false);
-        player.frame = 1;
-        player.body.clearShapes();
-        player.body.loadPolygon('sprite_physics', 'player');
-        player.anchor.setTo(0.5, 0.5);
-        player.body.fixedRotation = true;
-        player.body.damping = 0.5;
-
-        player.animations.add('idle', [10, 11, 12, 13, 14, 15, 16, 17], 10, true);
-        player.animations.add('jump', [20, 21, 22, 23, 24, 25, 26, 27, 28], 10, true);
-        player.animations.add('shoot', [30, 31, 32, 33, 34, 35, 36, 37], 10, true);
-        player.animations.add('run', [38, 39, 40, 41, 42, 43, 44, 45], 10, true);
-        player.animations.add('die', [1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
-        this.physics.p2.enable(player);
-        this.camera.follow(player);
-        player.body.collideWorldBounds = true;
-    },
-    createSphere: function () {
-        enemy1 = new EnemySphere('sphere2', this.game, 810, 90, 'sphere2', 28);
-        enemy1.sphere.body.moveLeft(400);
-        var spriteMaterial = this.game.physics.p2.createMaterial('sphere2', enemy1.sphere.body);
-        worldMaterial = this.game.physics.p2.createMaterial('Collisions', map3.body);
-        this.game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
-        var contactMaterial = this.game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial);
-        contactMaterial.restitution = 1.0;
     },
     createMiniSphere: function (x, y) {
         enemyMini1 = new EnemySphere('miniSphere1', this.game, x, y, 'miniSphereCyan', 10);
@@ -299,35 +296,6 @@ Game.Level3.prototype = {
         var contactMaterial7 = this.game.physics.p2.createContactMaterial(spriteMaterial7, worldMaterial);
         contactMaterial7.restitution = 1;
     },
-    createBomb: function (x, y) {
-        bomb = new EnemyBomb('bomb', this.game, x, y, 'bomb');
-        bomb.weapon.animations.add('turn', [1, 2, 3, 4, 5], 10, true);
-        explosion = this.game.add.sprite(bomb.weapon.position.x - 70, 520, 'boom');
-        explosion.animations.add('boom', [
-            11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-            31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-            41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-            51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-            61, 62, 63, 64], 60, false);
-        // bomb.weapon.collidesWith(player);
-        // this.physics.p2.enable(bomb, true);
-    },
-    createBullets: function () {
-        //Bullets
-        this.bullets = this.add.group();
-        this.bullets.enableBody = true;
-        this.bullets.physicsBodyType = Phaser.Physics.P2JS;
-        this.bullets.createMultiple(10, 'bullet', 0, false);
-        this.bullets.setAll('anchor.x', 0.5);
-        this.bullets.setAll('anchor.y', 0.5);
-        this.bullets.setAll('scale.x', 0.5);
-        this.bullets.setAll('scale.y', 0.5);
-        this.bullets.setAll('outOfBoundsKill', true);
-        this.bullets.setAll('checkWorldBounds', true);
-        // this.bullets.events.onOutOfBounds.add(this.bulletKill, this);
-
-    },
     fireBullet: function () {
         if (!player.alive || this.time.now < shootTime) {
             return;
@@ -363,7 +331,36 @@ Game.Level3.prototype = {
         this.createMiniSphere(body2.x, body2.y);
         body2.sprite.kill();
         body1.sprite.kill();
-        Score += 50;
+        score += 50;
+        let rndDrop = randomDrop();
+        switch (rndDrop) {
+            case 1:
+            case 2:
+            case 3:
+                this.createPowerUp(this);
+                this.powerUp = this.powerUp.getFirstExists(false);
+                this.powerUp.reset(body2.x, body2.y + 15);
+                this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
+                break;
+            case 4:
+            case 5:
+            case 6:
+                this.createBarrel(this);
+                this.barrel = this.barrel.getFirstExists(false);
+                this.barrel.reset(body2.x, body2.y + 15);
+                this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
+                break;
+            case 7:
+            case 8:
+                this.dropLive(this);
+                this.live = this.live.getFirstExists(false);
+                this.live.reset(body2.x, body2.y + 15);
+                this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
+                break;
+            default:
+                break;
+        }
+
     },
     hitEnemyMini: function (body1, body2) {
         if (bool) {
@@ -375,60 +372,102 @@ Game.Level3.prototype = {
         }
         body2.sprite.kill();
         body1.sprite.kill();
-        Score += 50;
+        score += 50;
     },
     hitEnemyMicro: function (body1, body2) {
         body2.sprite.kill();
         body1.sprite.kill();
-        Score += 50;
+        score += 50;
     },
     hitPlayer: function (body1, body2) {
+        sndHit.play();
         body2.sprite.kill();
         liveCounter--;
         if (liveCounter !== 0)
             this.state.restart();
-        // body2.sprite.reset(initPlayer.x, initPlayer.y);
         var sprite = lives.getFirstExists(true);
         if (sprite) {
             sprite.kill();
         }
+        if (enemyMini1 !== undefined)
+            player.body.createBodyCallback(enemyMini1.sphere, this.hitEnemyMini, this);
+        if (enemyMini2 !== undefined)
+            player.body.createBodyCallback(enemyMini2.sphere, this.hitEnemyMini, this);
+        if (bomb !== undefined)
+            player.body.createBodyCallback(bomb.weapon, this.hitEnemyMini, this);
+
+    },
+    createPowerUp: function (game) {
+        game.powerUp = game.add.group();
+        game.powerUp.enableBody = true;
+        game.powerUp.physicsBodyType = Phaser.Physics.P2JS;
+        game.powerUp.createMultiple(1, 'powerUp', 0, false);
+        game.powerUp.setAll('anchor.x', 0.5);
+        game.powerUp.setAll('anchor.y', 0.5);
+        game.powerUp.setAll('outOfBoundsKill', true);
+        game.powerUp.setAll('checkWorldBounds', true);
+    },
+    createBarrel: function (game) {
+        game.barrel = game.add.group();
+        game.barrel.enableBody = true;
+        game.barrel.physicsBodyType = Phaser.Physics.P2JS;
+        game.barrel.createMultiple(1, 'barrel', 0, false);
+        game.barrel.setAll('anchor.x', 0.5);
+        game.barrel.setAll('anchor.y', 0.5);
+        game.barrel.setAll('outOfBoundsKill', true);
+        game.barrel.setAll('checkWorldBounds', true);
+    },
+    dropLive: function (game) {
+        game.live = game.add.group();
+        game.live.enableBody = true;
+        game.live.physicsBodyType = Phaser.Physics.P2JS;
+        game.live.createMultiple(1, 'live', 0, false);
+        game.live.setAll('anchor.x', 0.5);
+        game.live.setAll('anchor.y', 0.5);
+        game.live.setAll('outOfBoundsKill', true);
+        game.live.setAll('checkWorldBounds', true);
+    },
+    catchDrop: function (body1, body2) {
+        if (this.powerUp !== null && this.powerUp !== undefined)
+            if (this.powerUp.alive) {
+                sndPickUp.play();
+                body2.sprite.kill();
+                score += 150;
+            }
+        if (this.live !== null && this.live !== undefined)
+            if (this.live.alive) {
+                sndPickUpLive.play();
+                body2.sprite.kill();
+                if (liveCounter < 5) {
+                    liveCounter += 1;
+                    this.liveIndicator();
+                }
+            }
+        if (this.barrel !== null && this.barrel !== undefined)
+            if (this.barrel.alive) {
+                sndExplosion.play();
+                score -= 50;
+            }
+    },
+    loseDrop: function () {
+        if (this.powerUp !== null && this.powerUp !== undefined)
+            if (this.powerUp.alive)
+                this.powerUp.kill();
+        if (this.barrel !== null && this.barrel !== undefined)
+            if (this.barrel.alive)
+                this.barrel.kill();
+        if (this.live !== null && this.live !== undefined)
+            if (this.live.alive)
+                this.live.kill();
     },
     liveIndicator: function () {
         lives = this.add.group();
         var s = 0;
         for (var i = 0; i < liveCounter; i++) {
-            var live = lives.create(livePosition + s, 85, 'live');
+            lives.create(livePosition + s, 85, 'live');
             s += 35;
         }
     },
     render: function () {
     }
 };
-
-function hit(body1, body2) {
-    //  body1 is the body that owns the callback
-    //  body2 is the body it impacted with
-    // body2.sprite.animations.play('die');
-    body2.sprite.kill();
-    body1.sprite.kill();
-
-}
-
-function randomLocation() {
-    return Math.floor((Math.random() * 750) + 80);
-}
-
-function checkIfCanJump(game) {
-    var result = false;
-    for (var i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++) {
-        var c = game.physics.p2.world.narrowphase.contactEquations[i];
-        if (c.bodyA === player.body.data || c.bodyB === player.body.data) {
-            var d = p2.vec2.dot(c.normalA, yAxis);
-            if (c.bodyA === player.body.data)
-                d *= -1;
-            if (d > 0.5)
-                result = true;
-        }
-    }
-    return result;
-}

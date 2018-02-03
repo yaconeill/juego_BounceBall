@@ -15,19 +15,11 @@ Game.Preloader.prototype = {
         this.load.tilemap('map', '../levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('map2', '../levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.tilemap('map3', '../levels/level3.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map4', '../levels/level4.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tileset', '../assets/tileset.png');
-        // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        // this.sacale.pageAlignHorizontally = true;
-        // this.scale.pageAlignVertically = true;
-        // this.stage.disableVisibilityChange = true;
 
-        // this.load.spritesheet('player', 'assets/player.png', 24, 26);
-        // this.load.spritesheet('player', '../assets/spritesheet.png', 130, 128, 10);
         this.load.spritesheet("player", "../assets/player.png", 130.5, 128, 45);
         this.load.physics("sprite_physics", "../assets/sprite_physics.json");
-
-
-        // this.load.spritesheet('buttons', 'assets/buttons.png', 193, 71);
 
         // objeto enemigo
         this.load.image('miniSphere', '../assets/sphere_32/sphere-11.png');
@@ -43,13 +35,25 @@ Game.Preloader.prototype = {
         // objeto munición
         this.load.image('bullet', '../assets/bullet.png');
 
+        // objetos extra
+        this.load.image('barrel', '../assets/barrel.png');
+        this.load.image('powerUp', '../assets/powerup.png');
+
+
         // sonidos
-        this.load.audio('shoot',['../assets/sound/laser.mp3']);
-        this.load.audio('walk',['../assets/sound/walk.wav']);
+        this.load.audio('background',['../assets/sound/background2.mp3']);
+        this.load.audio('shoot',['../assets/sound/shoot.wav']);
+        this.load.audio('jump',['../assets/sound/jump.wav']);
+        this.load.audio('hit',['../assets/sound/hit.mp3']);
+        this.load.audio('pickup',['../assets/sound/pickup.wav']);
+        this.load.audio('pickuplive',['../assets/sound/pickupLive.wav']);
+        this.load.audio('bounce',['../assets/sound/bounce.mp3']);
+        this.load.audio('explosion',['../assets/sound/explosion.wav']);
 
         // Titulo juego
         this.load.image('titlescreen', '../assets/titlescreen.png');
         this.load.image('button', '../assets/button.png');
+        this.load.image('button2', '../assets/buttonAzul.png');
 
         // User attributes
         this.load.image('live', '../assets/live.png');

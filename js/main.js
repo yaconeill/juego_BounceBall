@@ -18,6 +18,7 @@ function init(currentUser) {
         game.state.add('Level1', Game.Level1);
         game.state.add('Level2', Game.Level2);
         game.state.add('Level3', Game.Level3);
+        game.state.add('Level4', Game.Level4);
         game.state.start('Boot');
 }
 

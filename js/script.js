@@ -109,6 +109,8 @@ function registerForm() {
         });
         user.country = $('#country').find(':selected').text();
         user.url = url;
+        user.level = 0;
+        user.score = 0;
         allUsers.push(user);
         localStorage.setItem('users', JSON.stringify(allUsers));
         // notification('success', 'Registrado correctamente, se auto redirigirá automáticamente.');
@@ -139,7 +141,7 @@ function loginForm() {
             }
         }
         else {
-            notification('error', 'El usuario o la contraseña no son correctas.');
+            notification('error', 'El usuario o la contraseña no son correctos.');
         }
     });
 
