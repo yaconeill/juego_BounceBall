@@ -21,32 +21,30 @@ Game.Level3 = function () {
 };
 //#region - variables
 var map3;
-// var layer;
-// var enemy1;
-// var enemyMini1;
-// var enemyMini2;
+var layer;
+var enemy1;
+var enemyMini1;
+var enemyMini2;
 var enemyMicro1, enemyMicro2, enemyMicro3, enemyMicro4;
 var liveCounter = 5;
-// var player;
-// var controls = {};
-// var jumpTimer = 0;
-// var button;
-// var worldMaterial;
+var player;
+var controls = {};
+var jumpTimer = 0;
+var button;
+var worldMaterial;
 var shootTime = 0;
-// var bomb;
-// var explosion;
-// var sndShoot;
-// var customBounds;
-// var Score = 0;
-// var scoreText;
-// var bonusText;
-// var endLevelText;
-// var endGameText;
-// var avatar;
-// var lives;
-// var bounces;
+var bomb;
+var explosion;
+var sndShoot;
+var customBounds;
+var scoreText;
+var bonusText;
+var endLevelText;
+var endGameText;
+var avatar;
+var lives;
+var bounces;
 var bool = true;
-var playerLevel = 0;
 
 //#endregion
 Game.Level3.prototype = {
@@ -63,11 +61,11 @@ Game.Level3.prototype = {
         customBounds = {left: null, right: null, top: null, bottom: null};
         layer = map3.createLayer('field');
         layer.resizeWorld();
+        game.physics.p2.convertTilemap(map3, layer);
+
         Game.Level1.prototype.createPlayer(game);
         Game.Level1.prototype.createSphere(game, map3);
         Game.Level1.prototype.createBullets(game);
-        Game.Level2.prototype.createPowerUp(game);
-        game.physics.p2.convertTilemap(map3, layer);
 
         // sndMusic = game.add.audio('background');
         // sndMusic.play();
@@ -117,20 +115,7 @@ Game.Level3.prototype = {
             }
             if (bomb.weapon.body !== null && player.alive)
                 bomb.weapon.body.createBodyCallback(player, this.hitPlayer, this);
-
-            //     if (bomb.weapon.position.x > player.position.x)
-            //         bomb.weapon.body.moveLeft(player.position.x);
-            //     else
-            //         bomb.weapon.body.moveRight(player.position.x);
-
         }
-
-        // var sprite = lives.getFirstExists(true);
-        // if (sprite)
-        //     sprite.kill();
-        // this.liveIndicator();
-        // if(enemy1.sphere.body.velocity.y < 130)
-
 
         if (liveCounter > 0 && player.alive) {
             if (Math.floor(enemy1.sphere.position.y) > 540) {
@@ -190,21 +175,32 @@ Game.Level3.prototype = {
             }, this);
 
             // Drop elements
-            if (this.powerUp !== null && this.powerUp !== undefined)
-                if (this.powerUp.alive) {
-                    enemy1.sphere.body.createBodyCallback(this.powerUp, this.loseDrop, this);
-                    player.body.createBodyCallback(this.powerUp, this.catchDrop, this);
-                }
-            if (this.barrel !== null && this.barrel !== undefined)
-                if (this.barrel.alive) {
-                    enemy1.sphere.body.createBodyCallback(this.barrel, this.loseDrop, this);
-                    player.body.createBodyCallback(this.barrel, this.catchDrop, this);
-                }
-            if (this.live !== null && this.live !== undefined)
-                if (this.live.alive) {
-                    enemy1.sphere.body.createBodyCallback(this.live, this.loseDrop, this);
-                    player.body.createBodyCallback(this.live, this.catchDrop, this);
-                }
+            if (enemyMini1 !== undefined && enemyMini1 !== null) {
+                if (this.powerUp !== null && this.powerUp !== undefined)
+                    if (this.powerUp.alive) {
+                        enemyMini1.sphere.body.createBodyCallback(this.powerUp, this.loseDrop, this);
+                        enemyMini2.sphere.body.createBodyCallback(this.powerUp, this.loseDrop, this);
+                        if (bomb !== undefined && bomb.weapon.body !== null)
+                            bomb.weapon.body.createBodyCallback(this.powerUp, this.loseDrop, this);
+                        player.body.createBodyCallback(this.powerUp, this.catchDrop, this);
+                    }
+                if (this.barrel !== null && this.barrel !== undefined)
+                    if (this.barrel.alive) {
+                        enemyMini1.sphere.body.createBodyCallback(this.barrel, this.loseDrop, this);
+                        enemyMini2.sphere.body.createBodyCallback(this.barrel, this.loseDrop, this);
+                        if (bomb !== undefined && bomb.weapon.body !== null)
+                            bomb.weapon.body.createBodyCallback(this.barrel, this.loseDrop, this);
+                        player.body.createBodyCallback(this.barrel, this.catchDrop, this);
+                    }
+                if (this.live !== null && this.live !== undefined)
+                    if (this.live.alive) {
+                        enemyMini1.sphere.body.createBodyCallback(this.live, this.loseDrop, this);
+                        enemyMini2.sphere.body.createBodyCallback(this.live, this.loseDrop, this);
+                        if (bomb !== undefined && bomb.weapon.body !== null)
+                            bomb.weapon.body.createBodyCallback(this.live, this.loseDrop, this);
+                        player.body.createBodyCallback(this.live, this.catchDrop, this);
+                    }
+            }
 
             //#region - Player controls
             if (Math.round(player.body.velocity.x) === 0 &&
@@ -301,7 +297,7 @@ Game.Level3.prototype = {
             return;
         }
         if (shootTime < this.time.now) {
-            shootTime = this.time.now + 900;
+            shootTime = this.time.now + 300;
             this.bullet = this.bullets.getFirstExists(false);
             if (this.bullet) {
                 this.bullet.reset(player.x, player.y - 40);
@@ -339,7 +335,7 @@ Game.Level3.prototype = {
             case 3:
                 this.createPowerUp(this);
                 this.powerUp = this.powerUp.getFirstExists(false);
-                this.powerUp.reset(body2.x, body2.y + 15);
+                this.powerUp.reset(body2.x, body2.y + 35);
                 this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
                 break;
             case 4:
@@ -347,14 +343,14 @@ Game.Level3.prototype = {
             case 6:
                 this.createBarrel(this);
                 this.barrel = this.barrel.getFirstExists(false);
-                this.barrel.reset(body2.x, body2.y + 15);
+                this.barrel.reset(body2.x, body2.y + 35);
                 this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
                 break;
             case 7:
             case 8:
                 this.dropLive(this);
                 this.live = this.live.getFirstExists(false);
-                this.live.reset(body2.x, body2.y + 15);
+                this.live.reset(body2.x, body2.y + 35);
                 this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
                 break;
             default:
@@ -444,10 +440,14 @@ Game.Level3.prototype = {
                 }
             }
         if (this.barrel !== null && this.barrel !== undefined)
-            if (this.barrel.alive) {
-                sndExplosion.play();
-                score -= 50;
-            }
+            if (this.barrel.alive)
+                if (this.barrel.alive) {
+                    sndExplosion.play();
+                    body2.sprite.kill();
+                    score -= 50;
+                    if (score < 0)
+                        score = 0;
+                }
     },
     loseDrop: function () {
         if (this.powerUp !== null && this.powerUp !== undefined)

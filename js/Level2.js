@@ -45,7 +45,6 @@ var shootTime = 0;
 var bomb;
 var explosion;
 var customBounds;
-// var Score = 0;
 var scoreText;
 var bonusText;
 var endLevelText;
