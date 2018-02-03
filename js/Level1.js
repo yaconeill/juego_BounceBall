@@ -100,35 +100,12 @@ Game.Level1.prototype = {
         avatar.height = 64;
 
         this.liveIndicator();
-        createButton(game, "Reiniciar", 64, 75, 75, 40,
+        createRoundButton(game, "", 32, 85, 40, 40,
             function () {
-                resetGame(game);
-            });
-        // /*
-        // Code for the pause menu
-        // */
-        //
-        // // Create a label to use as a button
-        // var pause_label = game.add.text(50, 60, 'Reiniciar juego', {font: '24px Arial', fill: '#fff'});
-        // pause_label.inputEnabled = true;
-        // pause_label.events.onInputUp.add(function () {
-        //     // When the paus button is pressed, we pause the game
-        //     game.paused = true;
-        //
-        //     // Then add the menu
-        //     var menu = game.add.sprite(w / 2, h / 2, 'button');
-        //     menu.anchor.setTo(0.5, 0.5);
-        //
-        //     // And a label to illustrate which menu item was chosen. (This is not necessary)
-        //     var choiseLabel = game.add.text(w / 2, h - 150, 'Click outside menu to continue', {
-        //         font: '30px Arial',
-        //         fill: '#fff'
-        //     });
-        //     choiseLabel.anchor.setTo(0.5, 0.5);
-        // });
-        //
-        // // Add a input listener that can help us return from being paused
-        // game.input.onDown.add(resetGame, self);
+                resetGame();
+                game.state.start('Preloader');
+            },4);
+        createRoundButton(game, "", 85, 85, 40, 40,muteMusic,1);
     },
     update: function () {
         var game = this;
@@ -178,6 +155,7 @@ Game.Level1.prototype = {
                     });
                     this.game.time.events.add(3000, function () {
                         score = score * liveCounter;
+                        saveScore(score, 1);
                         game.state.start('Level2');
                     });
                 }
@@ -224,6 +202,9 @@ Game.Level1.prototype = {
         } else {
             player.animations.play('die');
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            saveScore(score, 1);
+            resetGame();
+            game.state.start('ScoreBoard');
         }
     },
     createPlayer: function (game) {
@@ -347,13 +328,11 @@ function createButton(game, string, x, y, w, h, callback) {
     });
     txt.anchor.setTo(0.5, 0.5);
 }
-
-function resetGame(game) {
+function resetGame() {
     liveCounter = 5;
     score = 0;
     sndMusic.stop();
     player.alive = true;
-    game.state.start('Preloader');
 }
 function checkIfCanJump(game) {
     var result = false;
@@ -368,4 +347,13 @@ function checkIfCanJump(game) {
         }
     }
     return result;
+}
+function saveScore(score,level) {
+    allUsers.find(e =>{
+        if(e.userName === currentUser){
+            e.score = score;
+            e.level = level;
+        }
+    });
+    localStorage.setItem('users', JSON.stringify(allUsers));
 }

@@ -53,6 +53,7 @@ Game.Preloader.prototype = {
         // Titulo juego
         this.load.image('titlescreen', '../assets/titlescreen.png');
         this.load.image('button', '../assets/button.png');
+        this.load.spritesheet('buttons', '../assets/buttons.png', 153, 160, 5);
         this.load.image('button2', '../assets/buttonAzul.png');
 
         // User attributes

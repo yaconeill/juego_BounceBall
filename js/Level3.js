@@ -93,10 +93,12 @@ Game.Level3.prototype = {
             Game.Level2.prototype.createBomb(game, rndX);
         }, this);
         this.liveIndicator();
-        createButton(game, "Reiniciar", 64, 75, 75, 40,
+        createRoundButton(game, "", 32, 85, 40, 40,
             function () {
-                resetGame(game);
-            });
+                resetGame();
+                game.state.start('Preloader');
+            },4);
+        createRoundButton(game, "", 85, 85, 40, 40,muteMusic,1);
     },
     update: function () {
         var game = this;
@@ -165,6 +167,7 @@ Game.Level3.prototype = {
                             game.time.events.remove(bombLoop);
                             this.game.time.events.add(2000, function () {
                                 score = score * liveCounter;
+                                saveScore(score, 3);
                                 game.state.start('Level4');
                             });
                         }
@@ -239,6 +242,9 @@ Game.Level3.prototype = {
         } else {
             game.time.events.remove(bombLoop);
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            saveScore(score, 3);
+            resetGame();
+            game.state.start('ScoreBoard');
         }
     },
     createMiniSphere: function (x, y) {

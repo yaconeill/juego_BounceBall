@@ -1,12 +1,12 @@
+var currentUser;
 $(document).ready(function () {
-    var currentUser = getCookie("currentUser");
+    currentUser = getCookie("currentUser");
     if (currentUser == null) {
         $(location).attr('href','login.html');
             return false;
     } else{
         init(currentUser);
     }
-        
 });
 
 function init(currentUser) {
@@ -15,6 +15,7 @@ function init(currentUser) {
         game.state.add('Boot', Game.Boot);
         game.state.add('Preloader', Game.Preloader);
         game.state.add('MainMenu', Game.MainMenu);
+        game.state.add('ScoreBoard', Game.ScoreBoard);
         game.state.add('Level1', Game.Level1);
         game.state.add('Level2', Game.Level2);
         game.state.add('Level3', Game.Level3);
@@ -33,16 +34,3 @@ function getCookie(name) {
     return decodeURIComponent(document.cookie.substring(index, endstr));
 
 }
-//
-// function deleteOneCookie(key) {
-//     console.log("Se ha eliminado la Cookie: " + key);
-//     return document.cookie = key + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-// }
-//
-// /**
-//  *  Cookies functions
-//  */
-// function setCookieMaxAge(name, value) {
-//     // Max Age 30 min
-//     document.cookie = name + "=" + encodeURIComponent(value) + ";max-age=" + 60 * 30 + ";";
-// }
