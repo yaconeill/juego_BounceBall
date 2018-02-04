@@ -48,7 +48,6 @@ var customBounds;
 var scoreText;
 var bonusText;
 var endLevelText;
-var endGameText;
 var avatar;
 var lives;
 var bounces;
@@ -232,7 +231,7 @@ Game.Level2.prototype = {
             //#endregion
         } else {
             game.time.events.remove(bombLoop);
-            endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 2);
             this.game.time.events.add(3000, function () {
                 saveScore(score, 2);
@@ -328,7 +327,7 @@ Game.Level2.prototype = {
     hitEnemyMini: function (body1, body2) {
         body2.sprite.kill();
         body1.sprite.kill();
-        score += 50;
+        score += 75;
     },
     hitPlayer: function (body1, body2) {
         sndHit.play();
@@ -398,14 +397,13 @@ Game.Level2.prototype = {
                 }
             }
         if (this.barrel !== null && this.barrel !== undefined)
-            if (this.barrel.alive)
-                if (this.barrel.alive) {
-                    sndExplosion.play();
-                    body2.sprite.kill();
-                    score -= 50;
-                    if (score < 0)
-                        score = 0;
-                }
+            if (this.barrel.alive) {
+                sndExplosion.play();
+                body2.sprite.kill();
+                score -= 50;
+                if (score < 0)
+                    score = 0;
+            }
 
     },
     loseDrop: function () {
@@ -434,5 +432,5 @@ function randomLocation() {
 }
 
 function randomDrop() {
-    return Math.floor((Math.random() * 10) + 1);
+    return Math.floor((Math.random() * 12) + 1);
 }

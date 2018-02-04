@@ -25,6 +25,9 @@ var enemyMiniExtra, enemyMiniExtra2;
 var liveCounter = 5;
 var shootTime = 0;
 var bool = true;
+var gotMGun = false;
+var newMGunPwr = 300;
+var timer, timerEvent, text;
 //#endregion
 Game.Level4.prototype = {
     create: function () {
@@ -53,6 +56,11 @@ Game.Level4.prototype = {
         sndPickUp = this.add.audio('pickup');
         sndPickUpLive = this.add.audio('pickuplive');
         sndExplosion = this.add.audio('explosion');
+
+        // Create a custom timer
+        timer = game.time.create();
+        // Create a delayed event 5s from now
+        timerEvent = timer.add(Phaser.Timer.SECOND * 5, this.endTimer, this);
 
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
@@ -143,9 +151,12 @@ Game.Level4.prototype = {
                         if (!enemyMicro3.sphere.alive &&
                             !enemyMicro4.sphere.alive) {
                             player.animations.play('shoot');
-                            endLevelText = this.add.text(380, 264, 'Fin del nivel 3', {fontSize: '32px', fill: '#fff'});
-                            scoreText = this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
-                            bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
+                            this.add.text(380, 264, 'Enhorabuena!!! Has Completado el juego.', {
+                                fontSize: '32px',
+                                fill: '#fff'
+                            });
+                            this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
+                            this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
                                 fontSize: '32px',
                                 fill: '#fff'
                             });
@@ -221,7 +232,7 @@ Game.Level4.prototype = {
             //#endregion
         } else {
             game.time.events.remove(bombLoop);
-            endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 4);
             this.game.time.events.add(3000, function () {
                 saveScore(score, 4);
@@ -297,6 +308,10 @@ Game.Level4.prototype = {
         contactMaterial7.restitution = 1;
     },
     fireBullet: function () {
+        if (gotMGun)
+            newMGunPwr = 150;
+        else
+            newMGunPwr = 300;
         if (!player.alive || this.time.now < shootTime)
             return;
         if (shootTime < this.time.now) {
@@ -355,6 +370,13 @@ Game.Level4.prototype = {
                 this.live.reset(body2.x, body2.y + 35);
                 this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
                 break;
+            case 9:
+            case 10:
+                this.createNewGun(this);
+                this.mGun = this.mGun.getFirstExists(false);
+                this.mGun.reset(body2.x, body2.y + 35);
+                this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
+                break;
             default:
                 break;
         }
@@ -369,12 +391,12 @@ Game.Level4.prototype = {
         }
         body2.sprite.kill();
         body1.sprite.kill();
-        score += 50;
+        score += 75;
     },
     hitEnemyMicro: function (body1, body2) {
         body2.sprite.kill();
         body1.sprite.kill();
-        score += 50;
+        score += 100;
     },
     hitPlayer: function (body1, body2) {
         sndHit.play();
@@ -441,14 +463,23 @@ Game.Level4.prototype = {
                 }
             }
         if (this.barrel !== null && this.barrel !== undefined)
-            if (this.barrel.alive)
-                if (this.barrel.alive) {
-                    sndExplosion.play();
-                    body2.sprite.kill();
-                    score -= 50;
-                    if (score < 0)
-                        score = 0;
-                }
+            if (this.barrel.alive) {
+                sndExplosion.play();
+                body2.sprite.kill();
+                score -= 50;
+                if (score < 0)
+                    score = 0;
+            }
+        if (this.mGun !== null && this.mGun !== undefined)
+            if (this.mGun.alive) {
+                sndPickUp.play();
+                body2.sprite.kill();
+                gotMGun = true;
+                timer.start();
+                this.time.events.add(Phaser.Timer.SECOND * 5, function () {
+                    gotMGun = false;
+                }, this);
+            }
     },
     loseDrop: function () {
         if (this.powerUp !== null && this.powerUp !== undefined)
@@ -468,5 +499,23 @@ Game.Level4.prototype = {
             lives.create(livePosition + s, 85, 'live');
             s += 35;
         }
+    },
+    render: function () {
+        if (timer.running) {
+            this.game.debug.text('Tiempo del arma',this.game.world.centerX - 75, 40, "#ff0");
+            this.game.debug.text(this.formatTime(
+                Math.round((timerEvent.delay - timer.ms) / 1000)),
+                this.game.world.centerX - 25, 65, "#ff0");
+        }
+    },
+    endTimer: function() {
+        // Stop the timer when the delayed event triggers
+        timer.stop();
+    },
+    formatTime: function(s) {
+        // Convert seconds (s) to a nicely formatted and padded time string
+        var minutes = "0" + Math.floor(s / 60);
+        var seconds = "0" + (s - minutes * 60);
+        return minutes.substr(-2) + ":" + seconds.substr(-2);
     }
 };

@@ -38,14 +38,13 @@ var explosion;
 var sndShoot;
 var customBounds;
 var scoreText;
-var bonusText;
-var endLevelText;
-var endGameText;
 var avatar;
 var lives;
 var bounces;
 var bool = true;
-
+var gotMGun = false;
+var newMGunPwr = 300;
+var timer, timerEvent, text;
 //#endregion
 Game.Level3.prototype = {
     create: function () {
@@ -72,6 +71,11 @@ Game.Level3.prototype = {
         sndPickUp = this.add.audio('pickup');
         sndPickUpLive = this.add.audio('pickuplive');
         sndExplosion = this.add.audio('explosion');
+
+        // Create a custom timer
+        timer = game.time.create();
+        // Create a delayed event 5s from now
+        timerEvent = timer.add(Phaser.Timer.SECOND * 5, this.endTimer, this);
 
         controls = {
             right: this.input.keyboard.addKey(Phaser.Keyboard.D),
@@ -113,7 +117,7 @@ Game.Level3.prototype = {
         }
 
         if (liveCounter > 0 && player.alive) {
-            if (Math.floor(enemy1.sphere.position.y) > 540){
+            if (Math.floor(enemy1.sphere.position.y) > 540) {
                 sndBounce.play();
                 bounces++;
             }
@@ -158,9 +162,9 @@ Game.Level3.prototype = {
                         if (!enemyMicro3.sphere.alive &&
                             !enemyMicro4.sphere.alive) {
                             player.animations.play('shoot');
-                            endLevelText = this.add.text(380, 264, 'Fin del nivel 3', {fontSize: '32px', fill: '#fff'});
-                            scoreText = this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
-                            bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
+                            this.add.text(380, 264, 'Fin del nivel 3', {fontSize: '32px', fill: '#fff'});
+                            this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
+                            this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
                                 fontSize: '32px',
                                 fill: '#fff'
                             });
@@ -203,6 +207,14 @@ Game.Level3.prototype = {
                             bomb.weapon.body.createBodyCallback(this.live, this.loseDrop, this);
                         player.body.createBodyCallback(this.live, this.catchDrop, this);
                     }
+                if (this.mGun !== null && this.mGun !== undefined)
+                    if (this.mGun.alive) {
+                        enemyMini1.sphere.body.createBodyCallback(this.mGun, this.loseDrop, this);
+                        enemyMini2.sphere.body.createBodyCallback(this.mGun, this.loseDrop, this);
+                        if (bomb !== undefined && bomb.weapon.body !== null)
+                            bomb.weapon.body.createBodyCallback(this.mGun, this.loseDrop, this);
+                        player.body.createBodyCallback(this.mGun, this.catchDrop, this);
+                    }
             }
 
             //#region - Player controls
@@ -224,7 +236,10 @@ Game.Level3.prototype = {
             if (controls.shoot.isDown && player.alive) {
                 sndShoot.play();
                 this.fireBullet();
-                player.frame = 34;
+                if (gotMGun)
+                    player.frame = 35;
+                else
+                    player.frame = 34;
             }
 
             if (controls.up.isDown && this.time.now > jumpTimer && checkIfCanJump(this)) {
@@ -236,7 +251,7 @@ Game.Level3.prototype = {
             //#endregion
         } else {
             game.time.events.remove(bombLoop);
-            endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 3);
             this.game.time.events.add(3000, function () {
                 saveScore(score, 3);
@@ -297,10 +312,14 @@ Game.Level3.prototype = {
         contactMaterial7.restitution = 1;
     },
     fireBullet: function () {
+        if (gotMGun)
+            newMGunPwr = 150;
+        else
+            newMGunPwr = 300;
         if (!player.alive || this.time.now < shootTime)
             return;
         if (shootTime < this.time.now) {
-            shootTime = this.time.now + 300;
+            shootTime = this.time.now + newMGunPwr;
             this.bullet = this.bullets.getFirstExists(false);
             if (this.bullet) {
                 this.bullet.reset(player.x, player.y - 40);
@@ -353,6 +372,13 @@ Game.Level3.prototype = {
                 this.live.reset(body2.x, body2.y + 35);
                 this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
                 break;
+            case 9:
+            case 10:
+                this.createNewGun(this);
+                this.mGun = this.mGun.getFirstExists(false);
+                this.mGun.reset(body2.x, body2.y + 35);
+                this.time.events.add(Phaser.Timer.SECOND * 3, this.loseDrop, this);
+                break;
             default:
                 break;
         }
@@ -367,12 +393,12 @@ Game.Level3.prototype = {
         }
         body2.sprite.kill();
         body1.sprite.kill();
-        score += 50;
+        score += 75;
     },
     hitEnemyMicro: function (body1, body2) {
         body2.sprite.kill();
         body1.sprite.kill();
-        score += 50;
+        score += 100;
     },
     hitPlayer: function (body1, body2) {
         sndHit.play();
@@ -412,6 +438,16 @@ Game.Level3.prototype = {
         game.barrel.setAll('outOfBoundsKill', true);
         game.barrel.setAll('checkWorldBounds', true);
     },
+    createNewGun: function (game) {
+        game.mGun = game.add.group();
+        game.mGun.enableBody = true;
+        game.mGun.physicsBodyType = Phaser.Physics.P2JS;
+        game.mGun.createMultiple(1, 'machineGun', 0, false);
+        game.mGun.setAll('anchor.x', 0.5);
+        game.mGun.setAll('anchor.y', 0.5);
+        game.mGun.setAll('outOfBoundsKill', true);
+        game.mGun.setAll('checkWorldBounds', true);
+    },
     dropLive: function (game) {
         game.live = game.add.group();
         game.live.enableBody = true;
@@ -439,14 +475,23 @@ Game.Level3.prototype = {
                 }
             }
         if (this.barrel !== null && this.barrel !== undefined)
-            if (this.barrel.alive)
-                if (this.barrel.alive) {
-                    sndExplosion.play();
-                    body2.sprite.kill();
-                    score -= 50;
-                    if (score < 0)
-                        score = 0;
-                }
+            if (this.barrel.alive) {
+                sndExplosion.play();
+                body2.sprite.kill();
+                score -= 50;
+                if (score < 0)
+                    score = 0;
+            }
+        if (this.mGun !== null && this.mGun !== undefined)
+            if (this.mGun.alive) {
+                sndPickUp.play();
+                body2.sprite.kill();
+                gotMGun = true;
+                timer.start();
+                this.time.events.add(Phaser.Timer.SECOND * 5, function () {
+                    gotMGun = false;
+                }, this);
+            }
     },
     loseDrop: function () {
         if (this.powerUp !== null && this.powerUp !== undefined)
@@ -466,5 +511,23 @@ Game.Level3.prototype = {
             lives.create(livePosition + s, 85, 'live');
             s += 35;
         }
+    },
+    render: function () {
+        if (timer.running) {
+            this.game.debug.text('Tiempo del arma',this.game.world.centerX - 75, 40, "#ff0");
+            this.game.debug.text(this.formatTime(
+                Math.round((timerEvent.delay - timer.ms) / 1000)),
+                this.game.world.centerX - 25, 65, "#ff0");
+        }
+    },
+    endTimer: function() {
+        // Stop the timer when the delayed event triggers
+        timer.stop();
+    },
+    formatTime: function(s) {
+        // Convert seconds (s) to a nicely formatted and padded time string
+        var minutes = "0" + Math.floor(s / 60);
+        var seconds = "0" + (s - minutes * 60);
+        return minutes.substr(-2) + ":" + seconds.substr(-2);
     }
 };

@@ -39,6 +39,7 @@ Game.Preloader.prototype = {
         this.load.image('barrel', '../assets/barrel.png');
         this.load.image('powerUp', '../assets/powerup.png');
         this.load.image('live', '../assets/live.png');
+        this.load.image('machineGun', '../assets/machineGun.png');
 
 
         // sonidos

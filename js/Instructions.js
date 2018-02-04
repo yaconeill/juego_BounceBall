@@ -29,19 +29,22 @@ Game.Instructions.prototype = {
             fill: '#fff',
             align: 'center'
         });
-        objects = '               +1 Vida               +150 Puntos               -50 Puntos';
+        objects = '       +1 Vida               +150 Puntos               -50 Puntos' +
+            '               5s Nueva arma';
         txtObjects = game.add.text(game.world.centerX - 250, game.world.centerY + 20, objects, {
             font: '16px Arial',
             fill: '#fff'
             // ,tabs: [ 164, 80 ]
         });
         // txtObjects.parseList(objects);
-        let live = game.add.sprite(game.world.centerX - 220, game.world.centerY + 20, 'live');
-        let pwrUp = game.add.sprite(game.world.centerX - 100, game.world.centerY + 15, 'powerUp');
-        let barrel = game.add.sprite(game.world.centerX + 60, game.world.centerY + 15, 'barrel');
+        let live = game.add.sprite(game.world.centerX - 250, game.world.centerY + 20, 'live');
+        let pwrUp = game.add.sprite(game.world.centerX - 130, game.world.centerY + 15, 'powerUp');
+        let barrel = game.add.sprite(game.world.centerX + 25, game.world.centerY + 15, 'barrel');
+        let mGun = game.add.sprite(game.world.centerX + 160, game.world.centerY + 20, 'machineGun');
         live.scale.setTo(.7);
         pwrUp.scale.setTo(.7);
         barrel.scale.setTo(.7);
+        mGun.scale.setTo(.7);
 
         var style = { font: "16px Arial", fill: "#fff", align: 'left', tabs: [ 164, 80 ] };
         var headings = [ 'Tecla', 'Uso'];

@@ -135,7 +135,8 @@ function loginForm() {
         var username = form.find('input').first();
         var password = form.find('input').first().next();
         if (allUsers !== undefined) {
-            if (allUsers.find(o => o.userName.toLowerCase() === username.val().toLowerCase() && o.password === password.val()) != null) {
+            if (allUsers.find(o => o.userName.toLowerCase() === username.val().toLowerCase()
+                    && o.password === password.val()) != null) {
                 setCookieMaxAge('currentUser', username.val().toLowerCase());
                 $(location).attr('href', 'game.html');
                 return false;

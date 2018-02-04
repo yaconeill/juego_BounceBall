@@ -27,9 +27,6 @@ var facing = 'left';
 var customBounds;
 var score = 0;
 var scoreText;
-var bonusText;
-var endLevelText;
-var endGameText;
 var avatar;
 var lives;
 const livePosition = 780;
@@ -106,7 +103,6 @@ Game.Level1.prototype = {
         var game = this;
         scoreText.text = 'Score: ' + score;
 
-
         if (liveCounter !== 0 && player.alive) {
             if (Math.floor(enemy1.sphere.position.y) > 540) {
                 bounces++;
@@ -130,9 +126,9 @@ Game.Level1.prototype = {
             if (!enemy1.sphere.alive)
                 if (!enemyMini1.sphere.alive && !enemyMini2.sphere.alive) {
                     player.animations.play('shoot');
-                    endLevelText = this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
-                    scoreText = this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
-                    bonusText = this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
+                    this.add.text(380, 264, 'Fin del nivel 1', {fontSize: '32px', fill: '#fff'});
+                    this.add.text(380, 294, 'Score: ' + score, {fontSize: '32px', fill: '#fff'});
+                    this.add.text(380, 324, 'Bonus vida: x' + liveCounter + ' ' + score * liveCounter, {
                         fontSize: '32px',
                         fill: '#fff'
                     });
@@ -181,7 +177,7 @@ Game.Level1.prototype = {
             }
         } else {
             player.animations.play('die');
-            endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
+            this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 1);
             this.game.time.events.add(3000, function () {
                 saveScore(score, 1);
