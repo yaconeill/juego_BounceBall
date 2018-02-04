@@ -60,7 +60,7 @@ Game.Level4.prototype = {
             up: this.input.keyboard.addKey(Phaser.Keyboard.W),
             shoot: this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
         };
-        scoreText = game.add.text(780, 50, 'Score: 0', {fontSize: '32px', fill: '#fff'});
+        scoreText = game.add.text(780, 50, 'Score: 0', {fontSize: '22px', fill: '#fff'});
         avatar = game.add.sprite(700, 50, 'avatar');
         avatar.width = 64;
         avatar.height = 64;
