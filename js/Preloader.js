@@ -52,7 +52,7 @@ Game.Preloader.prototype = {
         this.load.audio('explosion',['../assets/sound/explosion.ogg']);
 
         // Titulo juego
-        this.load.image('titleScreen', '../assets/titleScreen.png');
+        this.load.image('titlescreen', '../assets/titlescreen.png');
         this.load.image('button', '../assets/button.png');
         this.load.spritesheet('buttons', '../assets/buttons.png', 153, 160, 5);
         this.load.image('button2', '../assets/buttonAzul.png');

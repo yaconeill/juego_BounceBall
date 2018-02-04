@@ -19,7 +19,7 @@ Game.MainMenu.prototype = {
         createRoundButton(game, "", 780, 500, 60, 60, function () {
             game.state.start('ScoreBoard');
         }, 2);
-        titleScreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titleScreen');
+        titleScreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titlescreen');
         titleScreen.anchor.setTo(0.5, 0.5);
     },
 
