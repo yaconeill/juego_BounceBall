@@ -3,6 +3,7 @@ Game.ScoreBoard = function (game) {
 var allUsers;
 Game.ScoreBoard.prototype = {
     create: function (game) {
+        loadUserData();
         titleScreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titlescreen');
         titleScreen.anchor.setTo(0.5, 0.5);
         game.add.text(game.world.centerX - 152, game.world.centerY - 152, "Mejores puntuaciones", {

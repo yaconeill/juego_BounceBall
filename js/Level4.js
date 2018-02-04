@@ -224,6 +224,7 @@ Game.Level4.prototype = {
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 4);
             this.game.time.events.add(3000, function () {
+                saveScore(score, 4);
                 resetGame();
                 game.state.start('ScoreBoard');
             });
