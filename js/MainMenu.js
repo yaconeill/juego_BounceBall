@@ -2,29 +2,25 @@ Game.MainMenu = function (game) {
 
 };
 var allUsers;
-var titlescreen;
-var sndMusic;
+var titleScreen;
 Game.MainMenu.prototype = {
     create: function (game) {
         loadUserData();
-        this.createButton(game, "Play", game.world.centerX, game.world.centerY + 32, 300, 100,
+        this.createButton(game, "Jugar", game.world.centerX, game.world.centerY + 32, 300, 100,
             function () {
-                // this.state.start('Level3');
                 this.state.start('Level1');
             });
 
-        this.createButton(game, 'About', game.world.centerX, game.world.centerY + 192, 300, 100,
+        this.createButton(game, 'Instrucciones', game.world.centerX, game.world.centerY + 192, 300, 100,
             function () {
-                console.log('About');
+                this.state.start('Instructions');
             });
-        sndMusic = game.add.audio('background');
-        sndMusic.play();
         createRoundButton(game, "", 860, 500, 60, 60, muteMusic, 1);
         createRoundButton(game, "", 780, 500, 60, 60, function () {
             game.state.start('ScoreBoard');
         }, 2);
-        titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titlescreen');
-        titlescreen.anchor.setTo(0.5, 0.5);
+        titleScreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titleScreen');
+        titleScreen.anchor.setTo(0.5, 0.5);
     },
 
     update: function (game) {

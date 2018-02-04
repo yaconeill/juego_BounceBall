@@ -38,13 +38,11 @@ var initPlayer = {
     y: 500
 };
 var w = 960, h = 600;
-// var gameXPsteps = 0;
 var yAxis = p2.vec2.fromValues(0, 1);
 
 var playerLevel = 0;
 
 //Sound variables
-// var sndMusic;
 var sndShoot;
 var sndJump;
 var sndHit;
@@ -74,12 +72,9 @@ Game.Level1.prototype = {
         layer.resizeWorld();
         this.createPlayer(game);
         this.createSphere(game, map);
-        // this.createWeapon();
         this.createBullets(game);
         game.physics.p2.convertTilemap(map, layer);
 
-        // sndMusic = game.add.audio('background');
-        // sndMusic.play();
         sndShoot = this.add.audio('shoot');
         sndJump = this.add.audio('jump');
         sndHit = this.add.audio('hit');
@@ -109,14 +104,8 @@ Game.Level1.prototype = {
     },
     update: function () {
         var game = this;
-        // if(this.paused){
-        // }
         scoreText.text = 'Score: ' + score;
-        // var sprite = lives.getFirstExists(true);
-        // if (sprite)
-        //     sprite.kill();
-        // this.liveIndicator();
-        // if(enemy1.sphere.body.velocity.y < 130)
+
 
         if (liveCounter !== 0 && player.alive) {
             if (Math.floor(enemy1.sphere.position.y) > 540) {
@@ -160,10 +149,6 @@ Game.Level1.prototype = {
                     });
                 }
 
-            // this.bullets.forEach(function (e) {
-            //     if (e.position.y < 80)
-            //         e.kill();
-            // }, this);
             this.bullets.forEach(function (e) {
                 if (e.position.y < 85 || e.position.y > 535)
                     e.kill();
@@ -176,19 +161,14 @@ Game.Level1.prototype = {
                 player.animations.play('run');
                 player.scale.setTo(1, 1);
                 player.body.moveRight(250);
-                // var sndWalk = this.add.audio('walk');
-                // sndWalk.play();
             }
 
             if (controls.left.isDown) {
                 player.animations.play('run');
                 player.scale.setTo(-1, 1);
                 player.body.moveLeft(250);
-                // var sndWalk2 = this.add.audio('walk');
-                // sndWalk2.play();
             }
-            if (controls.shoot.isDown && player.alive/* && Math.round(player.body.velocity.x) === 0*/) {
-                // player.animations.play('shoot');
+            if (controls.shoot.isDown && player.alive) {
                 sndShoot.play();
                 this.fireBullet();
                 player.frame = 34;
@@ -203,8 +183,10 @@ Game.Level1.prototype = {
             player.animations.play('die');
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 1);
-            resetGame();
-            game.state.start('ScoreBoard');
+            this.game.time.events.add(3000, function () {
+                resetGame();
+                game.state.start('ScoreBoard');
+            });
         }
     },
     createPlayer: function (game) {
@@ -263,21 +245,17 @@ Game.Level1.prototype = {
         game.bullets.setAll('scale.y', 0.5);
         game.bullets.setAll('outOfBoundsKill', true);
         game.bullets.setAll('checkWorldBounds', true);
-        // this.bullets.events.onOutOfBounds.add(this.bulletKill, this);
 
     },
     fireBullet: function () {
-        if (!player.alive || this.time.now < shootTime) {
+        if (!player.alive || this.time.now < shootTime)
             return;
-        }
         if (shootTime < this.time.now) {
             shootTime = this.time.now + 300;
             this.bullet = this.bullets.getFirstExists(false);
             if (this.bullet) {
                 this.bullet.reset(player.x, player.y - 40);
-                // this.bullet.body.velocity.y = -500;
                 this.bullet.body.velocity.y = -1200;
-                // this.bullet.body.moveUp(1200);
 
             }
             this.bullet.body.createBodyCallback(enemy1.sphere, this.hitEnemy, this);
@@ -301,9 +279,8 @@ Game.Level1.prototype = {
         if (liveCounter !== 0)
             this.state.restart();
         var sprite = lives.getFirstExists(true);
-        if (sprite) {
+        if (sprite)
             sprite.kill();
-        }
     },
     liveIndicator: function () {
         lives = this.add.group();
@@ -314,20 +291,6 @@ Game.Level1.prototype = {
         }
     }
 };
-function createButton(game, string, x, y, w, h, callback) {
-    var button1 = game.add.button(x, y, 'button', callback, this, 2, 1, 0);
-
-    button1.anchor.setTo(0.5, 0.5);
-    button1.width = w;
-    button1.height = h;
-
-    var txt = game.add.text(button1.x, button1.y, string, {
-        font: '14px Arial',
-        fill: '#000',
-        align: 'center'
-    });
-    txt.anchor.setTo(0.5, 0.5);
-}
 function resetGame() {
     liveCounter = 5;
     score = 0;
@@ -351,8 +314,10 @@ function checkIfCanJump(game) {
 function saveScore(score,level) {
     allUsers.find(e =>{
         if(e.userName === currentUser){
-            e.score = score;
-            e.level = level;
+            if (score > e.score){
+                e.score = score;
+                e.level = level;
+            }
         }
     });
     localStorage.setItem('users', JSON.stringify(allUsers));

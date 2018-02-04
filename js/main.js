@@ -16,6 +16,7 @@ function init(currentUser) {
         game.state.add('Preloader', Game.Preloader);
         game.state.add('MainMenu', Game.MainMenu);
         game.state.add('ScoreBoard', Game.ScoreBoard);
+        game.state.add('Instructions', Game.Instructions);
         game.state.add('Level1', Game.Level1);
         game.state.add('Level2', Game.Level2);
         game.state.add('Level3', Game.Level3);

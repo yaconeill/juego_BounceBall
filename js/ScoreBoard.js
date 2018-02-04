@@ -3,8 +3,8 @@ Game.ScoreBoard = function (game) {
 var allUsers;
 Game.ScoreBoard.prototype = {
     create: function (game) {
-        titlescreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titlescreen');
-        titlescreen.anchor.setTo(0.5, 0.5);
+        titleScreen = game.add.sprite(game.world.centerX, game.world.centerY - 192, 'titleScreen');
+        titleScreen.anchor.setTo(0.5, 0.5);
         game.add.text(game.world.centerX - 152, game.world.centerY - 152, "Mejores puntuaciones", {
             font: '32px Arial',
             fill: '#fff',
@@ -33,7 +33,6 @@ Game.ScoreBoard.prototype = {
                     });
                 } else
                     zero ++;
-
             }
         } else
             showNoScore(game);

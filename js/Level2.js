@@ -74,8 +74,6 @@ Game.Level2.prototype = {
         map2.addTilesetImage('tileset');
         customBounds = {left: null, right: null, top: null, bottom: null};
 
-        // sndMusic = game.add.audio('background');
-        // sndMusic.play();
         sndShoot = this.add.audio('shoot');
         sndJump = this.add.audio('jump');
         sndHit = this.add.audio('hit');
@@ -112,8 +110,8 @@ Game.Level2.prototype = {
             function () {
                 resetGame();
                 game.state.start('Preloader');
-            },4);
-        createRoundButton(game, "", 85, 85, 40, 40,muteMusic,1);
+            }, 4);
+        createRoundButton(game, "", 85, 85, 40, 40, muteMusic, 1);
     },
     update: function () {
         var game = this;
@@ -126,7 +124,8 @@ Game.Level2.prototype = {
                 bomb.weapon.kill();
             }
             if (bomb.weapon.body !== null && player.alive)
-                bomb.weapon.body.createBodyCallback(player, this.hitPlayer, this);
+                if (bomb.weapon.alive)
+                    bomb.weapon.body.createBodyCallback(player, this.hitPlayer, this);
         }
 
         if (liveCounter > 0 && player.alive) {
@@ -136,6 +135,11 @@ Game.Level2.prototype = {
             }
             if (bounces > 8)
                 this.hitPlayer(enemy1.sphere, player.body);
+            if (enemyMini1 !== undefined)
+                if (Math.floor(enemyMini1.sphere.position.y) > 540 ||
+                    Math.floor(enemyMini2.sphere.position.y) > 540)
+                    sndBounce.play();
+
 
             enemy1.sphere.body.createBodyCallback(player, this.hitPlayer, this);
             if (enemyMini1 !== null && enemyMini1 !== undefined) {
@@ -207,18 +211,13 @@ Game.Level2.prototype = {
                 player.animations.play('run');
                 player.scale.setTo(1, 1);
                 player.body.moveRight(250);
-                // var sndWalk = this.add.audio('walk');
-                // sndWalk.play();
             }
             if (controls.left.isDown) {
                 player.animations.play('run');
                 player.scale.setTo(-1, 1);
                 player.body.moveLeft(250);
-                // var sndWalk2 = this.add.audio('walk');
-                // sndWalk2.play();
             }
-            if (controls.shoot.isDown && player.alive/* && Math.round(player.body.velocity.x) === 0*/) {
-                // player.animations.play('shoot');
+            if (controls.shoot.isDown && player.alive) {
                 sndShoot.play();
                 this.fireBullet();
                 player.frame = 34;
@@ -235,8 +234,10 @@ Game.Level2.prototype = {
             game.time.events.remove(bombLoop);
             endGameText = this.add.text(380, 264, 'Fin del juego', {fontSize: '32px', fill: '#fff'});
             saveScore(score, 2);
-            resetGame();
-            game.state.start('ScoreBoard');
+            this.game.time.events.add(3000, function () {
+                resetGame();
+                game.state.start('ScoreBoard');
+            });
         }
     },
     createMiniSphere: function (x, y) {
@@ -267,21 +268,16 @@ Game.Level2.prototype = {
             41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
             51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
             61, 62, 63, 64], 60, false);
-        // this.physics.p2.enable(bomb, true);
     },
     fireBullet: function () {
-        if (!player.alive || this.time.now < shootTime) {
+        if (!player.alive || this.time.now < shootTime)
             return;
-        }
         if (shootTime < this.time.now) {
             shootTime = this.time.now + 300;
             this.bullet = this.bullets.getFirstExists(false);
             if (this.bullet) {
                 this.bullet.reset(player.x, player.y - 40);
-                // this.bullet.body.velocity.y = -500;
                 this.bullet.body.velocity.y = -1200;
-                // this.bullet.body.moveUp(1200);
-
             }
             this.bullet.body.createBodyCallback(enemy1.sphere, this.hitEnemy, this);
             if (enemyMini1 !== undefined)
@@ -327,7 +323,6 @@ Game.Level2.prototype = {
             default:
                 break;
         }
-
     },
     hitEnemyMini: function (body1, body2) {
         body2.sprite.kill();
@@ -336,17 +331,17 @@ Game.Level2.prototype = {
     },
     hitPlayer: function (body1, body2) {
         sndHit.play();
+        if (body2.sprite.alive)
+            liveCounter--;
         body2.sprite.kill();
-        liveCounter--;
         score -= 50;
         if (score < 0)
             score = 0;
         if (liveCounter !== 0)
             this.state.restart();
         var sprite = lives.getFirstExists(true);
-        if (sprite) {
+        if (sprite)
             sprite.kill();
-        }
         if (enemyMini1 !== undefined)
             player.body.createBodyCallback(enemyMini1.sphere, this.hitEnemyMini, this);
         if (enemyMini2 !== undefined)
@@ -430,8 +425,6 @@ Game.Level2.prototype = {
             lives.create(livePosition + s, 85, 'live');
             s += 35;
         }
-    },
-    render: function () {
     }
 };
 

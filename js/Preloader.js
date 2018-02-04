@@ -1,7 +1,7 @@
 Game.Preloader = function (game) {
     this.preloaderBar = null;
 };
-
+var sndMusic;
 Game.Preloader.prototype = {
     preload: function () {
         var allUsers = JSON.parse(localStorage.getItem('users'));
@@ -38,26 +38,26 @@ Game.Preloader.prototype = {
         // objetos extra
         this.load.image('barrel', '../assets/barrel.png');
         this.load.image('powerUp', '../assets/powerup.png');
+        this.load.image('live', '../assets/live.png');
 
 
         // sonidos
         this.load.audio('background',['../assets/sound/background2.mp3']);
-        this.load.audio('shoot',['../assets/sound/shoot.wav']);
-        this.load.audio('jump',['../assets/sound/jump.wav']);
-        this.load.audio('hit',['../assets/sound/hit.mp3']);
-        this.load.audio('pickup',['../assets/sound/pickup.wav']);
-        this.load.audio('pickuplive',['../assets/sound/pickupLive.wav']);
-        this.load.audio('bounce',['../assets/sound/bounce.mp3']);
-        this.load.audio('explosion',['../assets/sound/explosion.wav']);
+        this.load.audio('shoot',['../assets/sound/shoot.ogg']);
+        this.load.audio('jump',['../assets/sound/jump.ogg']);
+        this.load.audio('hit',['../assets/sound/hit.ogg']);
+        this.load.audio('pickup',['../assets/sound/pickup.ogg']);
+        this.load.audio('pickuplive',['../assets/sound/pickupLive.ogg']);
+        this.load.audio('bounce',['../assets/sound/bounce.ogg']);
+        this.load.audio('explosion',['../assets/sound/explosion.ogg']);
 
         // Titulo juego
-        this.load.image('titlescreen', '../assets/titlescreen.png');
+        this.load.image('titleScreen', '../assets/titleScreen.png');
         this.load.image('button', '../assets/button.png');
         this.load.spritesheet('buttons', '../assets/buttons.png', 153, 160, 5);
         this.load.image('button2', '../assets/buttonAzul.png');
 
         // User attributes
-        this.load.image('live', '../assets/live.png');
         var currentUser = getCookie("currentUser");
         allUsers.find(function (user) {
             if(user.userName === currentUser){
@@ -71,6 +71,8 @@ Game.Preloader.prototype = {
 
     },
     create: function () {
+        sndMusic = this.add.audio('background');
+        sndMusic.play();
         this.state.start('MainMenu');
     }
 };
